@@ -55,3 +55,27 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.tour.name}: {self.amount}"
+
+
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
+    contact_name = models.CharField(max_length=50)
+    contact_phone = models.CharField(max_length=20, default="000-000-0000")
+    contact_email = models.EmailField()
+    address = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_paid = models.BooleanField(default=False)
+
+    class Choices(models.IntegerChoices):
+        NEW = 1
+        PROCESSING = 2
+        SHIPPED = 3
+        COMPLETED = 4
+        CANCELED = 5
+
+    status = models.IntegerField(choices=Choices, default=Choices.NEW)
+
+    @property
+    def total(self):
+        return sum([item.item_total for item in self.items.all()])
