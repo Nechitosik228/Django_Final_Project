@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 
 class Balance(models.Model):
-    amount = models.DecimalField(default=0, decimal_places=2)
+    amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
 
 
 class Profile(models.Model):
