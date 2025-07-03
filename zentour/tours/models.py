@@ -8,7 +8,7 @@ class Tour(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
-    image_path = models.ImageField(upload_to='tour_images/')
+    image_path = models.ImageField(upload_to="tour_images/")
     discount = models.IntegerField(default=0)
     available = models.BooleanField(default=True)
     tickets_amount = models.IntegerField()
@@ -24,8 +24,8 @@ class Tour(models.Model):
             return self.price
 
     class Meta:
-        ordering = ['-end_date']
-        db_table = 'tours'
+        ordering = ["-end_date"]
+        db_table = "tours"
 
     def __str__(self):
         return self.name
