@@ -50,4 +50,4 @@ class CartItem(models.Model):
 
     @property
     def total_price(self):
-        return self.amount * self.tour.price
+        return self.amount * self.tour.discount_price
