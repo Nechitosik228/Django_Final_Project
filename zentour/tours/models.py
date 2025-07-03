@@ -10,6 +10,7 @@ class Tour(models.Model):
     image_path = models.ImageField(upload_to='tour_images/')
     discount = models.IntegerField(default=0)
     available = models.BooleanField(default=True)
+    tickets_available = models.IntegerField()
     tickets_amount = models.IntegerField()
     cities = models.CharField(max_length=250)
     created_at = models.DateField(auto_now_add=True)
