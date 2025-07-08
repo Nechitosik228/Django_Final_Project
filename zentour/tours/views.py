@@ -31,4 +31,4 @@ def home(request):
     elif filter == "decrease_rating":
         tours = tours.order_by("-rating")
 
-    return render(request, 'home.html', context={'tours': tours})
+    return render(request, 'tours/home.html', context={'tours': tours})
