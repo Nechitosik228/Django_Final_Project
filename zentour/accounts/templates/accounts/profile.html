@@ -1,0 +1,11 @@
+{% extends 'tours/base.html' %}
+
+{% block content %}
+    <h1>Profile</h1>
+
+    <ul>
+        <li><img src="{{profile.avatar.url}}" alt="avatar" width="150"></li>
+        <li>Username: {{ request.user.username }}</li>
+        <li>Email: {{ request.user.email }}</li>
+    </ul>
+{% endblock %}
