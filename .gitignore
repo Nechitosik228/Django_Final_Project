@@ -173,3 +173,5 @@ cython_debug/
 # Ignore mydb.db file
 /mydb.db
 tmp/
+
+avatars/

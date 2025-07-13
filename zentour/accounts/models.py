@@ -11,7 +11,7 @@ class Balance(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
-    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    avatar = models.ImageField(upload_to="avatars/",default="/avatars/default_avatar.jpg", blank=True, null=True)
     balance = models.OneToOneField(Balance, on_delete=models.CASCADE)
 
     def __str__(self):
