@@ -1,0 +1,21 @@
+{% extends 'tours/base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <div style="text-align: center;">
+        <h1>Profile</h1>
+    </div>
+
+    <ul>
+    <li>
+        
+        <img src="{{ profile.avatar.url }}" alt="avatar" width="150">
+    </li>
+    <li>Username: {{ request.user.username }}</li>
+    <li>Email: {{ request.user.email }}</li>
+    <li>Balance: {{ profile.balance.amount }}</li> 
+</ul>
+
+    <a href="{% url 'accounts:edit_profile' %}">Edit profile</a>
+{% endblock %}
