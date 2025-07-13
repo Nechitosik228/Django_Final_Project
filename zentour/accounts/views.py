@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .forms import RegisterForm, LoginForm, ProfileUpdateForm
 
@@ -67,3 +69,27 @@ def edit_user_profile(request):
     return render(
         request, "accounts/edit_profile.html", {"form": form, "profile": profile}
     )
+
+
+@login_required
+def superuser_view(request):
+    if request.user.is_superuser == True:
+        messages.success(request, 'You are already super user')
+        return redirect('accounts:profile')
+    return render(request, 'accounts/superuser.html', {'payment': settings.SUPER_USER_PAYMENT})
+
+    
+
+@login_required
+def become_superuser(request):
+    if request.user.profile.balance.amount < settings.SUPER_USER_PAYMENT:
+        messages.error(request, 'You do not have enough money')
+        return redirect('accounts:profile')
+        
+    request.user.profile.balance.amount -= settings.SUPER_USER_PAYMENT
+    request.user.profile.balance.save()
+    request.user.is_superuser = True
+    request.user.save()
+
+    messages.success(request, 'Now you are a superuser and can create your own tour!')
+    return redirect('accounts:profile')

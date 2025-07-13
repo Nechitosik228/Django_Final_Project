@@ -1,0 +1,29 @@
+{% extends 'tours/base.html' %}
+
+{% block style %}
+    <style type="text/css">
+        .center {
+            text-align: center;
+        }
+
+        .card {
+            margin: auto;
+            width: 50%;
+            margin-top: 15%;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="center">
+        <div class="card text-bg-primary">
+            <h1 class="card-header">Welcome!</h1>
+            <div class="card-body">
+                <p>You want to be able to create your own tours and earn money from it?</p>
+                <p>Then make an investment into our company by paying ${{payment}} in order to become our superuser.</p>
+                <p> All you have to do is just click one button!</p>
+                <a href="{% url 'accounts:become_superuser' %}" class="btn btn-success">Become superuser</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
