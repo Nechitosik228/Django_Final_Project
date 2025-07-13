@@ -26,12 +26,26 @@ class Tour(models.Model):
         else:
             return self.price
 
+    @property
+    def rating(self):
+        if len(self.reviews) > 0:
+            return sum(review.rating for review in self.reviews) / len(self.reviews)
+
     class Meta:
         ordering = ["-end_date"]
         db_table = "tours"
 
     def __str__(self):
         return self.name
+
+
+class Review(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, related_name="reviews", null=True
+    )
+    tour = models.OneToOneField(Tour, on_delete=models.CASCADE, related_name='reviews')
+    comment = models.TextField(max_length=300)
+    rating = models.FloatField()
 
 
 class Cart(models.Model):
