@@ -28,3 +28,4 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.AVATAR_URL, document_root=settings.AVATAR_ROOT)
+    urlpatterns += static(settings.TOUR_IMAGE_URL, document_root=settings.TOUR_IMAGE_ROOT)
