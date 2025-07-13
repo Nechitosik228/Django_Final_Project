@@ -48,8 +48,6 @@ def create_tour(request):
             start_date = form.cleaned_data.get('start_date')
             end_date = form.cleaned_data.get('end_date')
             image = form.cleaned_data.get('image')
-            print(form.cleaned_data)
-            print(image)
             tour = form.save(commit=False)
             tour.user = request.user
             tour.start_date = start_date
