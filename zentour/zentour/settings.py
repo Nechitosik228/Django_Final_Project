@@ -120,13 +120,11 @@ STATIC_URL = 'static/'
 AVATAR_URL = 'avatars/'
 AVATAR_ROOT = f'{BASE_DIR}/avatars'
 
+TOUR_IMAGE_URL = 'tour_images/'
+TOUR_IMAGE_ROOT = f'{BASE_DIR}/tour_images'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-USE_L1ON = False
-
-
-DATE_INPUT_FORMATS = ['%d-%m-%Y', '%Y/%m/%d']
