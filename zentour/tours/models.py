@@ -3,12 +3,15 @@ from django.contrib.auth.models import User
 
 
 class Tour(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, related_name="tours", null=True
+    )
     name = models.CharField(max_length=200, unique=True)
     description = models.TextField()
     start_date = models.DateField()
     end_date = models.DateField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
-    image_path = models.ImageField(upload_to="tour_images/")
+    image = models.ImageField(upload_to="tour_images/", null=True)
     discount = models.IntegerField(default=0)
     available = models.BooleanField(default=True)
     tickets_amount = models.IntegerField()

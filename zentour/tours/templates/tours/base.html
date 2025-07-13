@@ -88,15 +88,16 @@
         </nav>
     </header>
 
-    <ul class="messages">
-        {% for message in messages %}
-        <li>
-            {{ message }}
-        </li>
-        {% endfor %}
-    </ul>
+    
 
     <main class="container mt-3 flex-shrink-0">
+        <ul class="messages">
+            {% for message in messages %}
+            <li>
+                {{ message }}
+            </li>
+            {% endfor %}
+        </ul>
         {% block content %}
         
         {% endblock %}
