@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -61,3 +61,9 @@ def create_tour(request):
     # else:
     #     messages.warning(request, 'You are not a super user!')
     #     return redirect('tours:home')
+
+
+def tour_detail(request, tour_id):
+    tour = get_object_or_404(Tour, id=tour_id)
+
+    return render(request, 'tour_detail.html', {'tour':tour})
