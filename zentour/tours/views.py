@@ -66,4 +66,4 @@ def create_tour(request):
 def tour_detail(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
 
-    return render(request, 'tour_detail.html', {'tour':tour})
+    return render(request, 'tours/tour_detail.html', {'tour':tour})

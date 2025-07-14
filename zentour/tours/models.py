@@ -13,7 +13,6 @@ class Tour(models.Model):
     price = models.DecimalField(max_digits=7, decimal_places=2)
     image = models.ImageField(upload_to="tour_images/", null=True)
     discount = models.IntegerField(default=0)
-    available = models.BooleanField(default=True)
     tickets_amount = models.IntegerField()
     cities = models.CharField(max_length=250)
     created_at = models.DateField(auto_now_add=True)
@@ -30,6 +29,13 @@ class Tour(models.Model):
     def rating(self):
         if len(self.reviews) > 0:
             return sum(review.rating for review in self.reviews) / len(self.reviews)
+
+    @property
+    def available(self):
+        if self.tickets_amount > 0:
+            return True
+        else:
+            return False
 
     class Meta:
         ordering = ["-end_date"]
