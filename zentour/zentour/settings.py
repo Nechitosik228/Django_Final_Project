@@ -117,6 +117,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = f'{BASE_DIR}/static/'
 AVATAR_URL = 'avatars/'
 AVATAR_ROOT = f'{BASE_DIR}/avatars'
 
