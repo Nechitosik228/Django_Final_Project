@@ -5,6 +5,7 @@
         .card {
             padding: 0;
             margin-top: 5%;
+            margin-right: 7%;
         }
 
         .btn {
@@ -20,25 +21,29 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Tours:</h1>
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for tour in tours %}
-        <div class="card text-bg-info mb-3" style="max-width: 540px;">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="{{ tour.image.url|default:'https://fotografie.at/galerie/userImages/33/484922-33adeea9.jpg' }}" class="img-fluid rounded-start" alt="{{ tour.name }}">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ tour.name }}</h5>
-                        <p class="card-text">{{ tour.description|truncatewords:15 }}</p>
-                        <a href="{% url 'tours:tour_detail' tour.id %}" class="btn btn-primary">Read more!</a>
-                        <span class="text-warning">Price: ${{ tour.discount_price }}</span>
+    <h1 style="color: white;">Tours:</h1>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% if tours %}
+        {% for tour in tours %}
+            <div class="card text-bg-info mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{{ tour.image.url|default:'https://fotografie.at/galerie/userImages/33/484922-33adeea9.jpg' }}" class="img-fluid rounded-start" alt="{{ tour.name }}">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ tour.name }}</h5>
+                            <p class="card-text">{{ tour.description|truncatewords:15 }}</p>
+                            <a href="{% url 'tours:tour_detail' tour.id %}" class="btn btn-primary">Read more!</a>
+                            <span class="text-warning">Price: ${{ tour.discount_price }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
+    {% else %}
+        <h3 style="color: white;">No tours found</h3>
+    {% endif %}
     </div>
 {% endblock %}
 

@@ -2,20 +2,47 @@
 
 {% block title %}Profile{% endblock %}
 
+{% block style %}
+    <style type="text/css">
+        img {
+            float: left;
+            width: 40%;
+            border-radius: 40%;
+        }
+
+        .card {
+            float: right;
+            width: 50%;
+            height: auto;
+            margin-top: 5%;
+            margin-right: 10%;
+        }
+
+        .white {
+            color: white;
+        }
+
+        .big {
+            font-size: 300%;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     <div style="text-align: center;">
-        <h1>Profile</h1>
+        <h1 class="white">Profile</h1>
     </div>
-
-    <ul>
-    <li>
-        
-        <img src="{{ profile.avatar.url }}" alt="avatar" width="150">
-    </li>
-    <li>Username: {{ request.user.username }}</li>
-    <li>Email: {{ request.user.email }}</li>
-    <li>Balance: {{ profile.balance.amount }}</li> 
-</ul>
-
-    <a href="{% url 'accounts:edit_profile' %}">Edit profile</a>
+    <img src="{{ profile.avatar.url }}" alt="avatar" width="150">
+    <div class="card text-bg-info mb-3" style="max-width: 540px;">
+        <div class="card-body">
+            <p class="white">Username: {{ request.user.username }}</p>
+            <p class="white">Email: {{ request.user.email }}</p>
+            <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">Edit profile</a>
+        </div>
+    </div>
+    <div class="card text-bg-info mb-3" style="max-width: 540px;">
+        <p class="card-title white big">Balance: ${{ profile.balance.amount }}</p>
+        <a href="#" class="btn btn-success">Top up balance</a>
+    </div>
+    
 {% endblock %}

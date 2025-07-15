@@ -51,7 +51,7 @@
         
         <p>Dates: {{ tour.start_date }} - {{ tour.end_date }}</p>
         {% if tour.available %}
-            <p>🎫Tickets left: {{ tour.tickets_amount }}</p>
+            <p>Tickets left: {{ tour.tickets_amount }}</p>
         {% else %}
             <p class="text-muted">Sold out</p>
         {% endif %}
@@ -83,7 +83,6 @@
                 Ticket price: ${{ tour.price }}
             </p>  
         {% endif %}
-        <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-success">Add to Cart!</a>
         </div>
     </div>
 {% endblock %}

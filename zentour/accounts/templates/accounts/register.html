@@ -2,15 +2,37 @@
 
 {% block title %}Register{% endblock %}
 
+{% block style %}
+    <style type="text/css">
+        .center {
+            text-align: center;
+            margin-top: 10%;
+        }
+
+        .card {
+            margin: auto;
+            width: 700px;
+        }
+        
+        span {
+            font-size: 13px;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-    <div class="container mt-5">
-        <h2>
-            Registration form
-        </h2>
-        <form method="post">
-            {% csrf_token %}
-            {{form.as_p}}
-            <input type="submit" class="btn btn-primary" value="Register">
-        </form>
+    <div class="center">
+        <div class="card text-bg-primary">
+            <div class="container mt-5">
+                <h2>
+                    Registration form
+                </h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    <input type="submit" class="btn btn-success" value="Register">
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock %}
