@@ -67,3 +67,14 @@ def tour_detail(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
 
     return render(request, 'tours/tour_detail.html', {'tour':tour})
+
+
+def cart_detail(request):
+    cart = request.user.cart
+    if not cart.items.count():
+        items = []
+    else:
+        items = cart.items.select_related('tour').all()
+    print(cart)
+
+    return render(request, 'tours/cart.html', {'cart': cart, 'items': items})
