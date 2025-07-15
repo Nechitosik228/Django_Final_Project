@@ -20,8 +20,8 @@
                             <td>{{item.tour.name}}</td>
                             <td>{{item.amount}}</td>
                             <td>{{item.total_price}}</td>
-                            <td><a href="{% url 'tour:cart_delete' item.tour.id %}" class="btn btn-sm btn-outline-danger" title="Remove">-</a></td>
-                            <td><a href="{% url 'tour:cart_add' item.tour.id %}" class="btn btn-sm btn-outline-success" title="Add">+</a></td>
+                            <td><a href="{% url 'tours:cart_delete' item.tour.id %}" class="btn btn-sm btn-outline-danger" title="Remove">-</a></td>
+                            <td><a href="{% url 'tours:cart_add' item.tour.id %}" class="btn btn-sm btn-outline-success" title="Add">+</a></td>
                         </tr>
                         
                     {% endfor %}
@@ -31,7 +31,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <a href="{% url 'tour:checkout' %}" class="btn btn-success">Order!</a>
+                <a href="{% url 'tours:checkout' %}" class="btn btn-success">Order!</a>
             </div>
         {% else %}
         <div class="alert alert-info" role="alert">
