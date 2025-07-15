@@ -1,0 +1,12 @@
+{% extends 'tours/base.html' %}
+
+{% block content %}
+    <h2>Password Recovery</h2>
+
+    <form method="POST">
+        <p>We will send you an email to the email address you used during registration to recover the password associated with your email address</p>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Reset Password</button>
+    </form>
+{% endblock %}
