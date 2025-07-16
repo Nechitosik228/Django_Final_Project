@@ -21,7 +21,7 @@ class Tour(models.Model):
     @property
     def discount_price(self):
         if self.discount:
-            return self.price - self.price * self.discount / 100
+            return round(self.price - self.price * self.discount / 100, 2)
         else:
             return self.price
 
@@ -61,7 +61,7 @@ class Cart(models.Model):
 
     @property
     def total(self):
-        return sum(item.item_total for item in self.items.all())
+        return sum(item.total_price for item in self.items.all())
 
     def __str__(self):
         return f"{self.user.username}'s cart"
