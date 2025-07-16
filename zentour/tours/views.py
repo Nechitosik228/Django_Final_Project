@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import Tour
+from .models import Tour, CartItem
 from .forms import TourForm
 
 
@@ -78,3 +78,27 @@ def cart_detail(request):
     print(cart)
 
     return render(request, 'tours/cart.html', {'cart': cart, 'items': items})
+
+
+def cart_delete(request, tour_id):
+    tour = get_object_or_404(Tour, id=tour_id)
+    cart = request.user.cart
+    cart_item = CartItem.objects.get(cart=cart, tour=tour)
+    cart_item.amount -= 1
+    if cart_item.amount == 0:
+        cart_item.delete()
+    else:
+        cart_item.save()
+    return redirect('tours:cart_detail')
+
+
+def cart_add(request, tour_id):
+    tour = get_object_or_404(Tour, id=tour_id)
+    cart = request.user.cart
+    cart_item, create = CartItem.objects.get_or_create(cart=cart, tour=tour)
+    if create:
+        cart_item.amount = 1
+    else:
+        cart_item.amount += 1
+    cart_item.save()
+    return redirect('tours:cart_detail')
