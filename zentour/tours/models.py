@@ -21,7 +21,7 @@ class Tour(models.Model):
     @property
     def discount_price(self):
         if self.discount:
-            return self.price - self.price * self.discount / 100
+            return round(self.price - self.price * self.discount / 100, 2)
         else:
             return self.price
 

@@ -14,6 +14,10 @@ def home(request):
     max_price = request.GET.get("max_price")
     start_date = request.GET.get("start_date")
     end_date = request.GET.get("end_date")
+    search = request.GET.get("search")
+
+    if search:
+        tours = tours.filter(name__icontains=search)
 
     if min_price:
         tours = tours.filter(price__gte=min_price)
@@ -68,7 +72,7 @@ def tour_detail(request, tour_id):
 
     return render(request, 'tours/tour_detail.html', {'tour':tour})
 
-
+@login_required
 def cart_detail(request):
     cart = request.user.cart
     if not cart.items.count():
@@ -79,7 +83,7 @@ def cart_detail(request):
 
     return render(request, 'tours/cart.html', {'cart': cart, 'items': items})
 
-
+@login_required
 def cart_delete(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
     cart = request.user.cart
@@ -91,7 +95,7 @@ def cart_delete(request, tour_id):
         cart_item.save()
     return redirect('tours:cart_detail')
 
-
+@login_required
 def cart_add(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
     cart = request.user.cart
