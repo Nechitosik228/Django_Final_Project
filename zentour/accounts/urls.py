@@ -42,4 +42,19 @@ urlpatterns = [
         ),
         name="password_reset_done",
     ),
+    path(
+        "reset/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="accounts/reset_password/confirm.html",
+            success_url=reverse_lazy("accounts:password_reset_complete"),
+        ),
+        name="password_reset_confirm",
+    ),
+    path(
+        "reset/done/",
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name="accounts/reset_password/complete.html"
+        ),
+        name="password_reset_complete",
+    ),
 ]
