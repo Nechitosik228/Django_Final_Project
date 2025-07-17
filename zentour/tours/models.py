@@ -105,8 +105,7 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-
-    order = models.OneToOneField(Order, on_delete=models.CASCADE, name="items")
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items", null=True)
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
     amount = models.IntegerField(default=1)
     price = models.DecimalField(max_digits=7, decimal_places=2)

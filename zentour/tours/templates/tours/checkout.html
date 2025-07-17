@@ -1,0 +1,14 @@
+{% extends 'tours/base.html' %}
+
+{% block title %}
+    Checkout
+{% endblock %}
+
+{% block content %}
+    <h2>Order payment</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit" class="btn btn-primary">
+    </form>
+{% endblock %}

@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import Tour, CartItem
-from .forms import TourForm
+from .models import Tour, CartItem, OrderItem
+from .forms import TourForm, OrderForm
 
 
 def home(request):
@@ -79,7 +79,6 @@ def cart_detail(request):
         items = []
     else:
         items = cart.items.select_related('tour').all()
-    print(cart)
 
     return render(request, 'tours/cart.html', {'cart': cart, 'items': items})
 
@@ -106,3 +105,48 @@ def cart_add(request, tour_id):
         cart_item.amount += 1
     cart_item.save()
     return redirect('tours:cart_detail')
+
+@login_required
+def checkout(request):
+    if not getattr(request.user, 'cart', None):
+        messages.error(request, 'Your cart is empty')
+        return redirect('tours:cart_detail')
+    if request.method == 'GET':
+        form = OrderForm()
+        form.initial['contact_email'] = request.user.email
+        form.initial['contact_name'] = request.user.first_name
+    else:
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.user = request.user
+            order.save()
+            cart = getattr(request.user, 'cart')
+            cart_items = cart.items.select_related('tour').all()
+            OrderItem.objects.bulk_create(
+                [
+                    OrderItem(
+                        order=order,
+                        tour=item.tour,
+                        amount=item.amount,
+                        price=item.tour.discount_price
+                    )
+                    for item in cart_items
+                ]
+            )
+            if order.total <= request.user.profile.balance.amount:
+                order.status = 2
+                order.is_paid = True
+                order.save()
+            else:
+                order.status = 5
+                order.save()
+                messages.error(request, "You don't have enough money on you balance")
+                return redirect('accounts:profile')
+            messages.success(request, 'You have completed your order')
+            return redirect('tours:home')
+    return render(request, 'tours/checkout.html', {'form':form})
+
+
+
+    
