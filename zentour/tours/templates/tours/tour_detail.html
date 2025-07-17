@@ -84,4 +84,16 @@
         {% endif %}
         </div>
     </div>
+    
+    {% if user.is_authenticated %}
+    <hr>
+    <h2>Leave a review</h2>
+    <form method="POST" action="{% url 'tours:submit_review' tour.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    {% else %}
+    <p><a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to leave a review.</p>
+    {% endif %}
 {% endblock %}

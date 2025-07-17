@@ -138,4 +138,4 @@ def submit_review(request, tour_id):
             return redirect("tours:tour_detail", tour_id=tour.id)
     else:
         form = ReviewForm(instance=review)
-    return render(request, "tours/submit_review.html", {"form": form, "tour": tour})
+    return render(request, "tours/tour_detail.html", {"form": form, "tour": tour})
