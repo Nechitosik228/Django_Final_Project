@@ -2,20 +2,50 @@
 
 {% block title %}Edit profile{% endblock %}
 
-{% block content %}
-    <div style="text-align: center;">
-        <h2>Edit Profile</h2>
-    </div>
+{% block style %}
+    <style type="text/css">
+        img {
+            width: 50%;
+            border-radius: 40%;
+            margin-bottom: 3%;
+        }
 
-    {% if profile.avatar %}
-        <p>Current Avatar:</p>
-        <img src="{{ profile.avatar.url }}" alt="avatar" width="150">
-    {% else %}
-        <p>No Avatar</p>
-    {% endif %}
-    <form enctype="multipart/form-data" method="post">
-        {%csrf_token%}
-        {{ form.as_p }}
-        <input type="submit" value="Submit">
-    </form>
+        .white {
+            color: white;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .card {
+            margin: auto;
+            width: 400px;
+            margin-top: 10%;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="center">
+        <div class="card text-bg-primary">
+            <h1 class="white card-header">Edit Profile</h1>
+
+
+            <div class="img">
+                {% if profile.avatar %}
+                    <h3 class="white">Current Avatar:</h3>
+                    <img src="{{ profile.avatar.url }}" alt="avatar" width="150">
+                {% else %}
+                    <p>No Avatar</p>
+                {% endif %}
+            </div>
+            <form enctype="multipart/form-data" method="post">
+                {%csrf_token%}
+                {{ form.as_p }}
+                <input type="submit" class="btn btn-success" value="Submit">
+            </form>
+        </div>
+    </div>
+    
 {% endblock %}
