@@ -57,7 +57,7 @@
                     {% if tour.available %}
                         <li class="list-group-item">🎫Tickets left: {{ tour.tickets_amount }}</li>
                     {% else %}
-                        <li class="list-group-item">Sold out</li>
+                        <li class="list-group-item"><strong>❌ Sold out</strong></li>
                     {% endif %}
                     <li class="list-group-item">🏢 Cities: {{ tour.cities }}</li>
                     {% if tour.rating  %}
@@ -88,7 +88,9 @@
                         </li>  
                     {% endif %}
                 </ul>
-                <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-success">Add to Cart!</a>
+                {% if tour.available %}
+                    <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-success">Add to Cart!</a>
+                {% endif %}
             </div>
         </div>
     </div>

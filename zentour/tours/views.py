@@ -59,7 +59,7 @@ def create_tour(request):
             tour.image = image
             tour.save()
             messages.success(request, "You have created your Tour")
-            return redirect("tours:home")
+            return redirect("tours:tour_detail", tour_id=tour.id)
 
     return render(request, "tours/create_tour.html", {"form": form})
     # else:
