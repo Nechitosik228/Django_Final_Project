@@ -1,6 +1,26 @@
 {% extends 'tours/base.html' %}
 
+{% block style %}
+    <style type="text/css">
+        .center {
+            text-align: center;
+            margin-top: 10%;
+        }
+
+        .card {
+            margin: auto;
+            width: 400px;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-    <h2>Password Change Successfully</h2>
-    <a href="{% url 'accounts:login' %}">Go to login</a>
+    <div class="center">
+        <div class="card text-bg-primary">
+            <div class="card-body">
+                <h2>Password Changed Successfully</h2>
+                <a href="{% url 'accounts:login' %}" class="btn btn-warning">Go to login</a>
+            </div>
+        </div>
+    </div>
 {% endblock %}

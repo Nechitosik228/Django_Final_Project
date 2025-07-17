@@ -1,16 +1,36 @@
 {% extends 'tours/base.html' %}
 
+{% block style %}
+    <style type="text/css">
+        .center {
+            text-align: center;
+            margin-top: 10%;
+        }
+
+        .card {
+            margin: auto;
+            width: 50%;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-    <h2>Create New Password</h2>
-    {% if validlink %}
-        <p>Enter the new password twice, and then send</p>
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input class="btn btn-primary" type="submit" value="Submit">
-        </form>
-    {% else %}
-        <p>Invalid Link</p>
-        <a href="{% url 'accounts:password_reset' %}">Try Again</a>
-    {% endif %}
+    <div class="center">
+        <div class="card text-bg-primary">
+            <h2 class="card-header">Create New Password</h2>
+            <div class="card-body">
+            {% if validlink %}
+                <p>Enter the new password twice, and then send</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input class="btn btn-success" type="submit" value="Submit">
+                </form>
+            {% else %}
+                <p>Invalid Link</p>
+                <a href="{% url 'accounts:password_reset' %}">Try Again</a>
+            {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -1,12 +1,31 @@
 {% extends 'tours/base.html' %}
 
-{% block content %}
-    <h2>Password Recovery</h2>
+{% block style %}
+    <style type="text/css">
+        .center {
+            text-align: center;
+            margin-top: 10%;
+        }
 
-    <form method="POST">
-        <p>We will send you an email to the email address you used during registration to recover the password associated with your email address</p>
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Reset Password</button>
-    </form>
+        .card {
+            margin: auto;
+            width: 400px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="center">
+        <div class="card text-bg-primary">
+            <h2 class="card-header">Password Recovery</h2>
+            <div class="card-body">
+                <form method="POST">
+                    <p>We will send you an email to the email address you used during registration to recover the password associated with your email address</p>
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success">Reset Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
