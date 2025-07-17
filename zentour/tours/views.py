@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import Tour, CartItem
+from .models import Tour, CartItem, Review
 from .forms import TourForm, ReviewForm
 
 
@@ -112,6 +112,30 @@ def cart_add(request, tour_id):
 
 
 @login_required
-def submit_review(request):
+def submit_review(request, tour_id):
+    tour = get_object_or_404(Tour, id=tour_id)
+
+    try:
+        review = tour.reviews.get(user=request.user)
+        is_edit = True
+    except Review.DoesNotExist:
+        review = None
+        is_edit = False
+
     if request.method == "POST":
-        pass
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.tour = tour
+            review.save()
+            msg = (
+                "Your review has been updated."
+                if is_edit
+                else "Your review has been added."
+            )
+            messages.success(request, msg)
+            return redirect("tours:tour_detail", tour_id=tour.id)
+    else:
+        form = ReviewForm(instance=review)
+    return render(request, "tours/submit_review.html", {"form": form, "tour": tour})
