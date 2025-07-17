@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from .models import Tour, CartItem
-from .forms import TourForm
+from .forms import TourForm, ReviewForm
 
 
 def home(request):
@@ -70,7 +70,8 @@ def create_tour(request):
 def tour_detail(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
 
-    return render(request, 'tours/tour_detail.html', {'tour':tour})
+    return render(request, "tours/tour_detail.html", {"tour": tour})
+
 
 @login_required
 def cart_detail(request):
@@ -78,10 +79,11 @@ def cart_detail(request):
     if not cart.items.count():
         items = []
     else:
-        items = cart.items.select_related('tour').all()
+        items = cart.items.select_related("tour").all()
     print(cart)
 
-    return render(request, 'tours/cart.html', {'cart': cart, 'items': items})
+    return render(request, "tours/cart.html", {"cart": cart, "items": items})
+
 
 @login_required
 def cart_delete(request, tour_id):
@@ -93,7 +95,8 @@ def cart_delete(request, tour_id):
         cart_item.delete()
     else:
         cart_item.save()
-    return redirect('tours:cart_detail')
+    return redirect("tours:cart_detail")
+
 
 @login_required
 def cart_add(request, tour_id):
@@ -105,4 +108,10 @@ def cart_add(request, tour_id):
     else:
         cart_item.amount += 1
     cart_item.save()
-    return redirect('tours:cart_detail')
+    return redirect("tours:cart_detail")
+
+
+@login_required
+def submit_review(request):
+    if request.method == "POST":
+        pass
