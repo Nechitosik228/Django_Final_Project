@@ -49,7 +49,7 @@ class Review(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.SET_NULL, related_name="reviews", null=True
     )
-    tour = models.OneToOneField(Tour, on_delete=models.CASCADE, related_name='reviews')
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='reviews')
     comment = models.TextField(max_length=300)
     rating = models.FloatField()
 
