@@ -1,5 +1,5 @@
 from django import forms
-from .models import Tour, Review
+from .models import Tour, Order, Review
 
 
 class TourForm(forms.ModelForm):
@@ -22,8 +22,26 @@ class TourForm(forms.ModelForm):
             "price",
             "discount",
             "tickets_amount",
-            "cities",
+            "cities"
         ]
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = [
+            "contact_name",
+            "contact_phone",
+            "contact_email",
+            "address"
+        ]
+
+        labels = {
+            "contact_name":"Enter your name",
+            "contact_phone":"Enter your phone number",
+            "contact_email":"Enter your email",
+            "address":"Enter your address"
+        }
+
 
 
 class ReviewForm(forms.ModelForm):

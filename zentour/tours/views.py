@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import Tour, CartItem, Review
-from .forms import TourForm, ReviewForm
+from .models import Tour, CartItem, OrderItem, Review
+from .forms import TourForm, ReviewForm, OrderForm
 
 
 def home(request):
@@ -43,28 +43,28 @@ def home(request):
 
 @login_required
 def create_tour(request):
-    # if request.user.is_superuser == True:
-    if request.method == "GET":
-        form = TourForm()
-    else:
-        form = TourForm(request.POST, request.FILES)
-        if form.is_valid():
-            start_date = form.cleaned_data.get("start_date")
-            end_date = form.cleaned_data.get("end_date")
-            image = form.cleaned_data.get("image")
-            tour = form.save(commit=False)
-            tour.user = request.user
-            tour.start_date = start_date
-            tour.end_date = end_date
-            tour.image = image
-            tour.save()
-            messages.success(request, "You have created your Tour")
-            return redirect("tours:tour_detail", tour_id=tour.id)
+    if request.user.is_superuser == True:
+        if request.method == "GET":
+            form = TourForm()
+        else:
+            form = TourForm(request.POST, request.FILES)
+            if form.is_valid():
+                start_date = form.cleaned_data.get("start_date")
+                end_date = form.cleaned_data.get("end_date")
+                image = form.cleaned_data.get("image")
+                tour = form.save(commit=False)
+                tour.user = request.user
+                tour.start_date = start_date
+                tour.end_date = end_date
+                tour.image = image
+                tour.save()
+                messages.success(request, "You have created your Tour")
+                return redirect("tours:tour_detail", tour_id=tour.id)
 
-    return render(request, "tours/create_tour.html", {"form": form})
-    # else:
-    #     messages.warning(request, 'You are not a super user!')
-    #     return redirect('tours:home')
+        return render(request, "tours/create_tour.html", {"form": form})
+    else:
+        messages.warning(request, 'You are not a super user!')
+        return redirect('accounts:superuser_view')
 
 
 def tour_detail(request, tour_id):
@@ -108,7 +108,50 @@ def cart_add(request, tour_id):
     else:
         cart_item.amount += 1
     cart_item.save()
-    return redirect("tours:cart_detail")
+    return redirect('tours:cart_detail')
+
+
+@login_required
+def checkout(request):
+    if not getattr(request.user, 'cart', None):
+        messages.error(request, 'Your cart is empty')
+        return redirect('tours:cart_detail')
+    if request.method == 'GET':
+        form = OrderForm()
+        form.initial['contact_email'] = request.user.email
+        form.initial['contact_name'] = request.user.first_name
+    else:
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.user = request.user
+            order.save()
+            cart = getattr(request.user, 'cart')
+            cart_items = cart.items.select_related('tour').all()
+            OrderItem.objects.bulk_create(
+                [
+                    OrderItem(
+                        order=order,
+                        tour=item.tour,
+                        amount=item.amount,
+                        price=item.tour.discount_price
+                    )
+                    for item in cart_items
+                ]
+            )
+            if order.total <= request.user.profile.balance.amount:
+                order.status = 2
+                request.user.profile.balance.amount -= order.total
+                order.is_paid = True
+                order.save()
+            else:
+                order.status = 5
+                order.save()
+                messages.error(request, "You don't have enough money on you balance")
+                return redirect('accounts:profile')
+            messages.success(request, 'You have completed your order')
+            return redirect('tours:home')
+    return render(request, 'tours/checkout.html', {'form':form})
 
 
 @login_required
