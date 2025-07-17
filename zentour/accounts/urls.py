@@ -1,7 +1,7 @@
 from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 
-from .views import register, login_view, logout_view, profile, edit_user_profile
+from .views import register, login_view, logout_view, profile, edit_user_profile, superuser_view, become_superuser
 
 app_name = "accounts"
 
@@ -57,4 +57,6 @@ urlpatterns = [
         ),
         name="password_reset_complete",
     ),
+    path("superuser/", superuser_view, name='superuser_view'),
+    path("become-superuser/", become_superuser, name='become_superuser')
 ]
