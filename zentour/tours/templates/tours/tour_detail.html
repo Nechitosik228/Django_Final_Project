@@ -8,19 +8,19 @@
         height: 30%;
         margin-right: 30px;
         position: sticky;
-        top: 0;
-        }
-
-        .text-success {
-          font-size: 50px;  
+        top: 10%;
         }
 
         p {
             font-size: 20px;
         }
 
-        span {
+        .text-success {
             font-size: 25px;
+        }
+
+        span {
+            font-size: 20px;
         }
 
         .checked {
@@ -37,6 +37,10 @@
             align-items: flex-start;
         }
 
+        .white {
+            color: white;
+        }
+
     </style>
 {% endblock %}
 
@@ -44,45 +48,53 @@
 
     <div class="tour">
         <img src="{{ tour.image.url|default:'https://fotografie.at/galerie/userImages/33/484922-33adeea9.jpg' }}" alt="{{ tour.name }}" class="image">
-        <div class="tour-text">
-        <h1>{{ tour.name }}</h1>
-        <p>{{ tour.description }}</p>
-        
-        <p>Dates: {{ tour.start_date }} - {{ tour.end_date }}</p>
-        {% if tour.available %}
-            <p>🎫Tickets left: {{ tour.tickets_amount }}</p>
-        {% else %}
-            <p class="text-muted">Sold out</p>
-        {% endif %}
-        <p>Cities: {{ tour.cities }}</p>
-        {% if tour.rating  %}
-            <!-- {% for i in '12345' %}
-                {% if forloop.counter >= tour.rating%}
-                    <span class="fa fa-star checked"></span>
-                {% else %}
-                    <span class="fa fa-star"></span>
-                {% endif %} -->
-                <span>{{ tour.rating }}</span>
-            <!-- {% endfor %} -->
-        {% else %}
-            <p style="color: gray;">No reviews</p>
-        {% endif %}
-        {% if tour.discount %}
-            <span class="text-success">
-                Ticket price: ${{ tour.discount_price }}
-            </span>
-            <span class="text-muted text-decoration-line-through">
-                ${{ tour.price }}
-            </span>
-            <span>
-                Discount: {{ tour.discount }}%
-            </span>
-        {% else %}
-            <p class="text-success">
-                Ticket price: ${{ tour.price }}
-            </p>  
-        {% endif %}
-        <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-success">Add to Cart!</a>
+        <div class="card text-bg-primary mb-3 tour-text">
+            <h1 class="card-header white">{{ tour.name }}</h1>
+            <div class="card-body">
+                <p class="card-text white">{{ tour.description }}</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">📅 Dates: {{ tour.start_date }} - {{ tour.end_date }}</li>
+                    {% if tour.available %}
+                        <li class="list-group-item">🎫Tickets left: {{ tour.tickets_amount }}</li>
+                    {% else %}
+                        <li class="list-group-item">Sold out</li>
+                    {% endif %}
+                    <li class="list-group-item">🏢 Cities: {{ tour.cities }}</li>
+                    {% if tour.rating  %}
+                        <!-- {% for i in '12345' %}
+                            {% if forloop.counter >= tour.rating%}
+                                <span class="fa fa-star checked"></span>
+                            {% else %}
+                                <span class="fa fa-star"></span>
+                            {% endif %} -->
+                            <li class="list-group-item">{{ tour.rating }}</li>
+                        <!-- {% endfor %} -->
+                    {% endif %}
+                    {% if tour.discount %}
+                        <li class="list-group-item">
+                        <span class="text-success">
+                            Ticket price: ${{ tour.discount_price }}
+                        </span>
+                        <span class="text-muted text-decoration-line-through">
+                            ${{ tour.price }}
+                        </span>
+                        <span>
+                            Discount: {{ tour.discount }}%
+                        </span>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item text-success">
+                            Ticket price: ${{ tour.price }}
+                        </li>  
+                    {% endif %}
+                </ul>
+                <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-success">Add to Cart!</a>
+            </div>
         </div>
     </div>
 {% endblock %}
+<ul class="list-group list-group-flush">
+    <li class="list-group-item white">Dates: {{ tour.start_date }} - {{ tour.end_date }}</li>
+    <li class="list-group-item">A second item</li>
+    <li class="list-group-item">A third item</li>
+  </ul>
