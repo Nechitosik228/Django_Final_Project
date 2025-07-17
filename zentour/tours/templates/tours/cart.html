@@ -1,8 +1,17 @@
 {% extends 'tours/base.html' %}
 
+{% block style %}
+    <style type="text/css">
+        .white {
+            color: white;
+        }
+
+    </style>
+{% endblock %}
+
 {% block content %}
     <div class="container mt-4">
-        <h2>Cart:</h2>
+        <h2 class="white">Cart:</h2>
         {% if items %}
             <div class="table-responsive">
                 <table class="table table-bordered table-hover align-middle text-center">
@@ -11,7 +20,8 @@
                             <th>Tour</th>
                             <th>Tickets amount</th>
                             <th>Price</th>
-                            <th></th>
+                            <th>Remove</th>
+                            <th>Add</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -19,9 +29,9 @@
                         <tr>
                             <td>{{item.tour.name}}</td>
                             <td>{{item.amount}}</td>
-                            <td>{{item.total_price}}</td>
-                            <td><a href="{% url 'tours:cart_delete' item.tour.id %}" class="btn btn-sm btn-outline-danger" title="Remove">-</a></td>
-                            <td><a href="{% url 'tours:cart_add' item.tour.id %}" class="btn btn-sm btn-outline-success" title="Add">+</a></td>
+                            <td>${{item.total_price}}</td>
+                            <td><a href="{% url 'tours:cart_delete' item.tour.id %}" class="btn btn-sm btn-outline-danger">-</a></td>
+                            <td><a href="{% url 'tours:cart_add' item.tour.id %}" class="btn btn-sm btn-outline-success">+</a></td>
                         </tr>
                         
                     {% endfor %}
