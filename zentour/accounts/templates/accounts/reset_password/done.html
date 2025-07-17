@@ -1,0 +1,7 @@
+{% extends 'tours/base.html' %}
+
+{% block content %}
+    <h2 class="text-success">Letter Sent</h2>
+    <p>Please check your email address. Note: Don't forget to check the folder</p>
+    <a href="{% url 'accounts:login' %}">Go to Login</a>
+{% endblock %}
