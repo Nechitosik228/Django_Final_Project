@@ -82,6 +82,9 @@ def superuser_view(request):
 
 @login_required
 def become_superuser(request):
+    if request.user.is_superuser == True:
+        messages.success(request, 'You are already super user')
+        return redirect('accounts:profile')
     if request.user.profile.balance.amount < settings.SUPER_USER_PAYMENT:
         messages.error(request, 'You do not have enough money')
         return redirect('accounts:profile')

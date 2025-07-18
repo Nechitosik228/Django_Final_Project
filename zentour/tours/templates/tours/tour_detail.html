@@ -41,6 +41,9 @@
             color: white;
         }
 
+        .btn {
+            margin-top: 10px;
+        }
     </style>
 {% endblock %}
 
@@ -88,9 +91,15 @@
                         </li>  
                     {% endif %}
                 </ul>
-                {% if tour.available %}
-                    <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-success">Add to Cart!</a>
+                {% if request.user != tour.user %}
+                    {% if tour.available %}
+                        <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-success">Add to Cart!</a>
+                    {% endif %} 
+                {% else %}
+                    <a href="#" class="btn btn-warning">Edit tour</a>
+                    <a href="#" class="btn btn-danger">Delete tour</a>
                 {% endif %}
+                
             </div>
         </div>
     </div>

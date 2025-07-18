@@ -37,6 +37,13 @@
         <div class="card-body">
             <p class="white">Username: {{ request.user.username }}</p>
             <p class="white">Email: {{ request.user.email }}</p>
+            {% if request.user.is_superuser == True %}
+                <p class="white">Super user: Yes</p>
+            {% else %}
+                <p class="white">Super user: No</p>
+                <a href="{% url 'accounts:superuser_view' %}" class="btn btn-success">Become superuser</a>
+            {% endif %}
+            
             <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">Edit profile</a>
         </div>
     </div>
