@@ -79,7 +79,6 @@ def superuser_view(request):
     return render(request, 'accounts/superuser.html', {'payment': settings.SUPER_USER_PAYMENT})
 
     
-
 @login_required
 def become_superuser(request):
     if request.user.is_superuser == True:
@@ -95,4 +94,11 @@ def become_superuser(request):
     request.user.save()
 
     messages.success(request, 'Now you are a superuser and can create your own tour!')
+    return redirect('accounts:profile')
+
+
+@login_required
+def top_up_balance(request):
+    request.user.profile.balance.amount += 1000
+    request.user.profile.balance.save()
     return redirect('accounts:profile')

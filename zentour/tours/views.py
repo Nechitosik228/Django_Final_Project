@@ -137,8 +137,10 @@ def checkout(request):
             if order.total <= request.user.profile.balance.amount:
                 order.status = 2
                 request.user.profile.balance.amount -= order.total
+                request.user.profile.balance.save()
                 order.is_paid = True
                 order.save()
+                cart.items.all().delete()
             else:
                 order.status = 5
                 order.save()
