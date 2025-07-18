@@ -1,0 +1,32 @@
+{% extends 'tours/base.html' %}
+
+{% block title %}Top up balance{% endblock %}
+
+{% block style %}
+    <style type="text/css">
+        .center {
+            text-align: center;
+        }
+
+        .card {
+            margin: auto;
+            width: 400px;
+            margin-top: 10%;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="center">
+        <div class="card text-bg-primary">
+            <h4 class="card-header">Top up your balance!</h4>
+            <div class="container mt-5">
+                <form method="post">
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    <input type="submit" class="btn btn-success" value="Top up">
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

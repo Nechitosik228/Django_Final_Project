@@ -4,7 +4,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .forms import RegisterForm, LoginForm, ProfileUpdateForm
+from .forms import RegisterForm, LoginForm, ProfileUpdateForm, BalanceForm
 
 
 def register(request):
@@ -99,6 +99,14 @@ def become_superuser(request):
 
 @login_required
 def top_up_balance(request):
-    request.user.profile.balance.amount += 1000
-    request.user.profile.balance.save()
-    return redirect('accounts:profile')
+    if request.method == 'GET':
+        form = BalanceForm()
+    else:
+        form = BalanceForm(request.POST)
+        if form.is_valid():
+            amount = form.cleaned_data.get('amount')
+            request.user.profile.balance.amount += amount
+            request.user.profile.balance.save()
+            messages.success(request, f'You have topped up your balance with ${amount}')
+            return redirect('accounts:profile')
+    return render(request, 'accounts/balance.html', {'form':form})
