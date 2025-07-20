@@ -1,5 +1,7 @@
 {% extends 'tours/base.html' %}
 
+{% block title %}{{ tour.name }}{% endblock %}
+
 {% block style %}
     <style type="text/css">
         .image {
@@ -56,14 +58,17 @@
         {% endif %}
         <p>Cities: {{ tour.cities }}</p>
         {% if tour.rating  %}
-            <!-- {% for i in '12345' %}
-                {% if forloop.counter >= tour.rating%}
+                <ul class="list-group-item">
+                {% for _ in full_stars %}
                     <span class="fa fa-star checked"></span>
-                {% else %}
-                    <span class="fa fa-star"></span>
-                {% endif %} -->
-                <span>{{ tour.rating }}</span>
-            <!-- {% endfor %} -->
+                {% endfor %}
+                {% if has_half_star %}
+                    <span class="fa fa-star-half-o checked"></span>
+                {% endif %}
+                {% for _ in empty_stars %}
+                    <span class="fa fa-star-o"></span>
+                {% endfor %}
+                </ul>
         {% else %}
             <p style="color: gray;">No reviews</p>
         {% endif %}
@@ -84,16 +89,38 @@
         {% endif %}
         </div>
     </div>
-    
-    {% if user.is_authenticated %}
-    <hr>
-    <h2>Leave a review</h2>
-    <form method="POST" action="{% url 'tours:submit_review' tour.id %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-    {% else %}
-    <p><a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to leave a review.</p>
-    {% endif %}
+    <div class="reviews">
+
+        {% if user.is_authenticated %}
+            <hr>
+            <h2>Leave a review</h2>
+            <form method="POST" action="{% url 'tours:submit_review' tour.id %}">
+                {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            {% else %}
+            <p><a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to leave a review.</p>
+        {% endif %}
+        
+        <hr>
+        <h2>Reviews</h2>
+        {% for review in tour.reviews.all %}
+            <div style="margin-bottom: 20px;">
+                <p><strong>{{ review.user.username }}</strong> rated:</p>
+                {% for _ in review.full_stars %}
+                    <span class="fa fa-star checked"></span>
+                {% endfor %}
+                {% if review.has_half_star %}
+                    <span class="fa fa-star-half-o checked"></span>
+                {% endif %}
+                {% for _ in review.empty_stars %}
+                    <span class="fa fa-star"></span>
+                {% endfor %}
+                <p>{{ review.comment }}</p>
+            </div>
+        {% empty %}
+            <p>No reviews yet.</p>
+        {% endfor %}
+    </div>
 {% endblock %}

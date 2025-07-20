@@ -17,6 +17,13 @@
             height: 200px; 
             object-fit: cover;
         }
+        .fa {
+            font-size: 16px;
+        }
+
+        .checked {
+            color: orange;
+        }
     </style>
 {% endblock %}
 
@@ -34,8 +41,20 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ tour.name }}</h5>
                             <p class="card-text">{{ tour.description|truncatewords:15 }}</p>
-                            <a href="{% url 'tours:tour_detail' tour.id %}" class="btn btn-primary">Read more!</a>
+                            <div>
+                                {% for _ in tour.full_stars %}
+                                    <span class="fa fa-star checked"></span>
+                                {% endfor %}
+                                {% if tour.has_half_star %}
+                                    <span class="fa fa-star-half-o checked"></span>
+                                {% endif %}
+                                {% for _ in tour.empty_stars %}
+                                    <span class="fa fa-star"></span>
+                                {% endfor %}
+                            </div>
+
                             <span class="text-warning">Price: ${{ tour.discount_price }}</span>
+                            <a href="{% url 'tours:tour_detail' tour.id %}" class="btn btn-primary">Read more!</a>
                         </div>
                     </div>
                 </div>

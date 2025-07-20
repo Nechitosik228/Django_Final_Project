@@ -4,6 +4,7 @@ from django.contrib import messages
 
 from .models import Tour, CartItem, OrderItem, Review
 from .forms import TourForm, ReviewForm, OrderForm
+from .utils import calculate_star_ranges
 
 
 def home(request):
@@ -34,7 +35,13 @@ def home(request):
     elif filter == "decrease_rating":
         tours = tours.order_by("-rating")
 
-    return render(request, 'tours/home.html', context={'tours': tours})
+    for tour in tours:
+        stars = calculate_star_ranges(tour.rating)
+        tour.full_stars = stars["full_stars"]
+        tour.has_half_star = stars["has_half_star"]
+        tour.empty_stars = stars["empty_stars"]
+
+    return render(request, "tours/home.html", context={"tours": tours})
 
 
 @login_required
@@ -45,9 +52,9 @@ def create_tour(request):
     else:
         form = TourForm(request.POST, request.FILES)
         if form.is_valid():
-            start_date = form.cleaned_data.get('start_date')
-            end_date = form.cleaned_data.get('end_date')
-            image = form.cleaned_data.get('image')
+            start_date = form.cleaned_data.get("start_date")
+            end_date = form.cleaned_data.get("end_date")
+            image = form.cleaned_data.get("image")
             print(form.cleaned_data)
             print(image)
             tour = form.save(commit=False)
@@ -56,20 +63,38 @@ def create_tour(request):
             tour.end_date = end_date
             tour.image = image
             tour.save()
-            messages.success(request, 'You have created your Tour') 
-            return redirect('tours:home')
-        
+            messages.success(request, "You have created your Tour")
+            return redirect("tours:home")
 
-    return render(request, 'tours/create_tour.html', {'form':form})
+    return render(request, "tours/create_tour.html", {"form": form})
     # else:
     #     messages.warning(request, 'You are not a super user!')
     #     return redirect('tours:home')
 
 
 def tour_detail(request, tour_id):
-    tour = get_object_or_404(Tour, id=tour_id)
+    tour = get_object_or_404(Tour.objects.prefetch_related("reviews__user"), id=tour_id)
+    form = ReviewForm() if request.user.is_authenticated else None
 
-    return render(request, "tours/tour_detail.html", {"tour": tour})
+    stars = calculate_star_ranges(tour.rating)
+
+    for review in tour.reviews.all():
+        review_stars = calculate_star_ranges(review.rating)
+        review.full_stars = review_stars["full_stars"]
+        review.has_half_star = review_stars["has_half_star"]
+        review.empty_stars = review_stars["empty_stars"]
+
+    return render(
+        request,
+        "tours/tour_detail.html",
+        {
+            "tour": tour,
+            "form": form,
+            "full_stars": stars["full_stars"],
+            "has_half_star": stars["has_half_star"],
+            "empty_stars": stars["empty_stars"],
+        },
+    )
 
 
 @login_required
@@ -107,33 +132,33 @@ def cart_add(request, tour_id):
     else:
         cart_item.amount += 1
     cart_item.save()
-    return redirect('tours:cart_detail')
+    return redirect("tours:cart_detail")
 
 
 @login_required
 def checkout(request):
-    if not getattr(request.user, 'cart', None):
-        messages.error(request, 'Your cart is empty')
-        return redirect('tours:cart_detail')
-    if request.method == 'GET':
+    if not getattr(request.user, "cart", None):
+        messages.error(request, "Your cart is empty")
+        return redirect("tours:cart_detail")
+    if request.method == "GET":
         form = OrderForm()
-        form.initial['contact_email'] = request.user.email
-        form.initial['contact_name'] = request.user.first_name
+        form.initial["contact_email"] = request.user.email
+        form.initial["contact_name"] = request.user.first_name
     else:
         form = OrderForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
             order.user = request.user
             order.save()
-            cart = getattr(request.user, 'cart')
-            cart_items = cart.items.select_related('tour').all()
+            cart = getattr(request.user, "cart")
+            cart_items = cart.items.select_related("tour").all()
             OrderItem.objects.bulk_create(
                 [
                     OrderItem(
                         order=order,
                         tour=item.tour,
                         amount=item.amount,
-                        price=item.tour.discount_price
+                        price=item.tour.discount_price,
                     )
                     for item in cart_items
                 ]
@@ -147,10 +172,10 @@ def checkout(request):
                 order.status = 5
                 order.save()
                 messages.error(request, "You don't have enough money on you balance")
-                return redirect('accounts:profile')
-            messages.success(request, 'You have completed your order')
-            return redirect('tours:home')
-    return render(request, 'tours/checkout.html', {'form':form})
+                return redirect("accounts:profile")
+            messages.success(request, "You have completed your order")
+            return redirect("tours:home")
+    return render(request, "tours/checkout.html", {"form": form})
 
 
 @login_required

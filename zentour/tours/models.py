@@ -27,8 +27,11 @@ class Tour(models.Model):
 
     @property
     def rating(self):
-        if len(self.reviews) > 0:
-            return sum(review.rating for review in self.reviews) / len(self.reviews)
+        all_review = self.reviews.all()
+        if all_review.exists():
+            return round(
+                sum(review.rating for review in all_review) / all_review.count(), 2
+            )
 
     @property
     def available(self):
@@ -49,13 +52,13 @@ class Review(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.SET_NULL, related_name="reviews", null=True
     )
-    tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='reviews')
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name="reviews")
     comment = models.TextField(max_length=300)
     rating = models.FloatField()
 
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="cart")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -105,7 +108,9 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items", null=True)
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name="items", null=True
+    )
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
     amount = models.IntegerField(default=1)
     price = models.DecimalField(max_digits=7, decimal_places=2)
