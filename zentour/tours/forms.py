@@ -48,7 +48,7 @@ class ReviewForm(forms.ModelForm):
     )
 
     rating = forms.FloatField(
-        widget=forms.NumberInput(attrs={"min": 0, "max": 5, "step": 0.5}),
+        widget=forms.NumberInput(attrs={"min": 0, "max": 5, "step": 1}),
         label="Rating (0–5)",
     )
 
