@@ -46,30 +46,30 @@ def home(request):
 
 @login_required
 def create_tour(request):
-    # if request.user.is_superuser == True:
-    if request.method == "GET":
-        form = TourForm()
-    else:
-        form = TourForm(request.POST, request.FILES)
-        if form.is_valid():
-            start_date = form.cleaned_data.get("start_date")
-            end_date = form.cleaned_data.get("end_date")
-            image = form.cleaned_data.get("image")
-            print(form.cleaned_data)
-            print(image)
-            tour = form.save(commit=False)
-            tour.user = request.user
-            tour.start_date = start_date
-            tour.end_date = end_date
-            tour.image = image
-            tour.save()
-            messages.success(request, "You have created your Tour")
-            return redirect("tours:home")
+    if request.user.is_superuser == True:
+        if request.method == "GET":
+            form = TourForm()
+        else:
+            form = TourForm(request.POST, request.FILES)
+            if form.is_valid():
+                start_date = form.cleaned_data.get("start_date")
+                end_date = form.cleaned_data.get("end_date")
+                image = form.cleaned_data.get("image")
+                print(form.cleaned_data)
+                print(image)
+                tour = form.save(commit=False)
+                tour.user = request.user
+                tour.start_date = start_date
+                tour.end_date = end_date
+                tour.image = image
+                tour.save()
+                messages.success(request, "You have created your Tour")
+                return redirect("tours:home")
 
-    return render(request, "tours/create_tour.html", {"form": form})
-    # else:
-    #     messages.warning(request, 'You are not a super user!')
-    #     return redirect('tours:home')
+        return render(request, "tours/create_tour.html", {"form": form})
+    else:
+        messages.warning(request, 'You are not a super user!')
+        return redirect('accounts:superuser_view')
 
 
 def tour_detail(request, tour_id):

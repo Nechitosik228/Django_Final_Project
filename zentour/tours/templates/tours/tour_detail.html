@@ -6,12 +6,14 @@
 {% block style %}
     <style type="text/css">
         .image {
-        float: left;
-        width: 50%;
-        height: 30%;
-        margin-right: 30px;
-        position: sticky;
-        top: 0;
+            float: left;
+            width: 50%;
+            height: 30%;
+            margin-right: 30px;
+            position: sticky;
+            top: 0;
+            margin: 0;
+            padding: 0;
         }
 
         .text-success {
@@ -47,6 +49,23 @@
         .btn {
             margin-top: 10px;
         }
+
+        .text-bg-info {
+            margin: 0;
+            padding: 0;
+            width: 500px;
+            margin-bottom: 2%;
+        }
+
+        div.reviews {
+            float: left;
+        }
+
+        .review-card label {
+            margin-bottom: 2%;
+            margin-right: 1%;
+            color: white;
+        }
     </style>
 {% endblock %}
 
@@ -67,7 +86,7 @@
                     {% endif %}
                     <li class="list-group-item">🏢 Cities: {{ tour.cities }}</li>
                     {% if tour.rating  %}
-                        <li>
+                        <li class="list-group-item">
                             {% for _ in full_stars %}
                                 <span class="fa fa-star checked"></span>
                             {% endfor %}
@@ -77,7 +96,7 @@
                             {% for _ in empty_stars %}
                                 <span class="fa fa-star-o"></span>
                             {% endfor %}
-                            <span>{{ tour.rating }}</span>
+                            <span style="font-size: 100%;">{{ tour.rating }}</span>
                         </li>
                     {% endif %}
                     {% if tour.discount %}
@@ -95,66 +114,79 @@
                     {% else %}
                         <li class="list-group-item text-success">
                             Ticket price: ${{ tour.price }}
-                        </li>  
+                        </li> 
                     {% endif %}
                 </ul>
-                {% if tour.available %}
-                    <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-success">Add to Cart!</a>
-                {% endif %}
-            </div>
-                <div class="reviews">
-
-                    {% if user.is_authenticated %}
-                        <hr>
-                        <h2>Leave a review</h2>
-                        <form method="POST" action="{% url 'tours:submit_review' tour.id %}">
-                            {% csrf_token %}
-            
-                            {{ form.comment.label_tag }}
-                            {{ form.comment }}
-            
-                            <label for="star-rating">Rating (1–5):</label>
-                            <div id="star-rating">
-                                {% for i in "12345" %}
-                                    <span class="fa fa-star star" data-value="{{ forloop.counter }}"></span>
-                                {% endfor %}
-                            </div>
-            
-                            {% with form.rating as rating_field %}
-                                {{ rating_field }}
-                                <style>
-                                    input[name="{{ rating_field.html_name }}"] {
-                                        display: none;
-                                    }
-                                </style>
-                            {% endwith %}
-            
-            
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </form>
-                        {% else %}
-                        <p><a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to leave a review.</p>
+                {% if request.user == tour.user %}
+                    <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-warning">Edit Tour</a>
+                    <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-danger">Delete Tour</a>
+                {% else %}
+                    {% if tour.available %}
+                        <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-success">Add to Cart!</a>
                     {% endif %}
-                    
-                    <hr>
-                    <h2>Reviews</h2>
-                    {% for review in tour.reviews.all %}
-                        <div style="margin-bottom: 20px;">
-                            <p><strong>{{ review.user.username }}</strong> rated:</p>
-                            {% for _ in review.full_stars %}
-                                <span class="fa fa-star checked"></span>
+                {% endif %}
+                
+            </div>
+        </div>
+    </div>
+    <div class="reviews">
+        <div class="card text-bg-info review-card" style="text-align: center;">
+            {% if request.user.is_authenticated %}
+                {% if request.user != tour.user %}
+                    <h2 class="card-header white">Leave a review</h2>
+                    <form method="POST" action="{% url 'tours:submit_review' tour.id %}">
+                        {% csrf_token %}
+
+                        {{ form.comment.label_tag }}
+                        {{ form.comment }}
+
+                        <label for="star-rating">Rating (1–5):</label>
+                        <div id="star-rating">
+                            {% for i in "12345" %}
+                                <span class="fa fa-star star" data-value="{{ forloop.counter }}"></span>
                             {% endfor %}
-                            {% if review.has_half_star %}
-                                <span class="fa fa-star-half-o checked"></span>
-                            {% endif %}
-                            {% for _ in review.empty_stars %}
-                                <span class="fa fa-star"></span>
-                            {% endfor %}
-                            <p>{{ review.comment }}</p>
                         </div>
-                    {% empty %}
-                        <p>No reviews yet.</p>
-                    {% endfor %}
+
+                        {% with form.rating as rating_field %}
+                            {{ rating_field }}
+                            <style>
+                                input[name="{{ rating_field.html_name }}"] {
+                                    display: none;
+                                }
+                            </style>
+                        {% endwith %}
+                        
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>   
+                {% endif %}   
+            {% else %}
+                <p><a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to leave a review.</p>
+            {% endif %}
+        </div>       
+        <h2 class="white">Reviews:</h2>
+        {% for review in tour.reviews.all %}
+            <div class="card text-bg-info">
+                <div class="card-body">
+                    <div style="margin-bottom: 20px;">
+                        <span class="white"><img src="{{ review.user.profile.avatar.url }}" style="border-radius: 50%; width: 8%; height: 10%; margin-bottom:1%" alt="{{ review.user.username }}"> {{ review.user.username }} rated:</span>
+                        {% for _ in review.full_stars %}
+                            <span class="fa fa-star checked"></span>
+                        {% endfor %}
+                        {% if review.has_half_star %}
+                            <span class="fa fa-star-half-o checked"></span>
+                        {% endif %}
+                        {% for _ in review.empty_stars %}
+                            <span class="fa fa-star"></span>
+                        {% endfor %}
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><p>{{ review.comment }}</p></li>
+                        </ul>
+                    </div>
                 </div>
+            </div>
+        {% empty %}
+            <p>No reviews yet.</p>
+        {% endfor %}
+    </div>
     <script src="{% static 'js/review_star.js' %}"></script>
 {% endblock %}

@@ -30,7 +30,7 @@ class Tour(models.Model):
         all_review = self.reviews.all()
         if all_review.exists():
             return round(
-                sum(review.rating for review in all_review) / all_review.count(), 2
+                sum(review.rating for review in all_review) / all_review.count(), 1
             )
 
     @property
