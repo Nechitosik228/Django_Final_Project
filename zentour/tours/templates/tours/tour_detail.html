@@ -1,4 +1,7 @@
 {% extends 'tours/base.html' %}
+{% load static %}
+
+{% block title %}{{ tour.name }}{% endblock %}
 
 {% block style %}
     <style type="text/css">
@@ -8,19 +11,19 @@
         height: 30%;
         margin-right: 30px;
         position: sticky;
-        top: 10%;
+        top: 0;
+        }
+
+        .text-success {
+            font-size: 50px;  
         }
 
         p {
             font-size: 20px;
         }
 
-        .text-success {
-            font-size: 25px;
-        }
-
         span {
-            font-size: 20px;
+            font-size: 25px;
         }
 
         .checked {
@@ -64,14 +67,18 @@
                     {% endif %}
                     <li class="list-group-item">🏢 Cities: {{ tour.cities }}</li>
                     {% if tour.rating  %}
-                        <!-- {% for i in '12345' %}
-                            {% if forloop.counter >= tour.rating%}
+                        <li>
+                            {% for _ in full_stars %}
                                 <span class="fa fa-star checked"></span>
-                            {% else %}
-                                <span class="fa fa-star"></span>
-                            {% endif %} -->
-                            <li class="list-group-item">{{ tour.rating }}</li>
-                        <!-- {% endfor %} -->
+                            {% endfor %}
+                            {% if has_half_star %}
+                                <span class="fa fa-star-half-o checked"></span>
+                            {% endif %}
+                            {% for _ in empty_stars %}
+                                <span class="fa fa-star-o"></span>
+                            {% endfor %}
+                            <span>{{ tour.rating }}</span>
+                        </li>
                     {% endif %}
                     {% if tour.discount %}
                         <li class="list-group-item">
@@ -91,16 +98,63 @@
                         </li>  
                     {% endif %}
                 </ul>
-                {% if request.user != tour.user %}
-                    {% if tour.available %}
-                        <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-success">Add to Cart!</a>
-                    {% endif %} 
-                {% else %}
-                    <a href="#" class="btn btn-warning">Edit tour</a>
-                    <a href="#" class="btn btn-danger">Delete tour</a>
+                {% if tour.available %}
+                    <a href="{% url 'tours:cart_add' tour.id%}" class="btn btn-success">Add to Cart!</a>
                 {% endif %}
-                
             </div>
-        </div>
-    </div>
+                <div class="reviews">
+
+                    {% if user.is_authenticated %}
+                        <hr>
+                        <h2>Leave a review</h2>
+                        <form method="POST" action="{% url 'tours:submit_review' tour.id %}">
+                            {% csrf_token %}
+            
+                            {{ form.comment.label_tag }}
+                            {{ form.comment }}
+            
+                            <label for="star-rating">Rating (1–5):</label>
+                            <div id="star-rating">
+                                {% for i in "12345" %}
+                                    <span class="fa fa-star star" data-value="{{ forloop.counter }}"></span>
+                                {% endfor %}
+                            </div>
+            
+                            {% with form.rating as rating_field %}
+                                {{ rating_field }}
+                                <style>
+                                    input[name="{{ rating_field.html_name }}"] {
+                                        display: none;
+                                    }
+                                </style>
+                            {% endwith %}
+            
+            
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                        {% else %}
+                        <p><a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to leave a review.</p>
+                    {% endif %}
+                    
+                    <hr>
+                    <h2>Reviews</h2>
+                    {% for review in tour.reviews.all %}
+                        <div style="margin-bottom: 20px;">
+                            <p><strong>{{ review.user.username }}</strong> rated:</p>
+                            {% for _ in review.full_stars %}
+                                <span class="fa fa-star checked"></span>
+                            {% endfor %}
+                            {% if review.has_half_star %}
+                                <span class="fa fa-star-half-o checked"></span>
+                            {% endif %}
+                            {% for _ in review.empty_stars %}
+                                <span class="fa fa-star"></span>
+                            {% endfor %}
+                            <p>{{ review.comment }}</p>
+                        </div>
+                    {% empty %}
+                        <p>No reviews yet.</p>
+                    {% endfor %}
+                </div>
+    <script src="{% static 'js/review_star.js' %}"></script>
 {% endblock %}
