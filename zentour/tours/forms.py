@@ -55,3 +55,30 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ["comment", "rating"]
+
+
+class EditTourForm(forms.ModelForm):
+    start_date = forms.DateField(
+        input_formats=["%d/%m/%Y"],
+        widget=forms.DateInput(format="%d/%m/%Y", attrs={"type": "date"}),
+    )
+
+    end_date = forms.DateField(
+        input_formats=["%d/%m/%Y"],
+        widget=forms.DateInput(format="%d/%m/%Y", attrs={"type": "date"}),
+    )
+    image = forms.ImageField(required=False, label="Change image:")
+
+    class Meta:
+        model = Tour
+        fields = [
+            "name",
+            "description",
+            "start_date",
+            "end_date",
+            "price",
+            "image",
+            "discount",
+            "tickets_amount",
+            "cities",
+        ]
