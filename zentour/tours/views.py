@@ -4,7 +4,7 @@ from django.contrib import messages
 
 from .models import Tour, CartItem, OrderItem, Review
 from .forms import TourForm, ReviewForm, OrderForm
-from .utils import calculate_star_ranges
+from .utils import calculate_star_ranges, create_transaction
 
 
 def home(request):
@@ -163,16 +163,19 @@ def checkout(request):
                     for item in cart_items
                 ]
             )
-            if order.total <= request.user.profile.balance.amount:
+            balance = request.user.profile.balance
+            if order.total <= balance.amount:
                 order.status = 2
-                request.user.profile.balance.amount -= order.total
-                request.user.profile.balance.save()
+                balance.amount -= order.total
+                balance.save()
+                create_transaction(balance, 2, order.total, 'Tour purchase', status=4)
                 order.is_paid = True
                 order.save()
                 cart.items.all().delete()
             else:
                 order.status = 5
                 order.save()
+                create_transaction(balance, 2, order.total, 'Tour purchase', status=5)
                 messages.error(request, "You don't have enough money on you balance")
                 return redirect("accounts:profile")
             messages.success(request, "You have completed your order")

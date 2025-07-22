@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from .forms import RegisterForm, LoginForm, ProfileUpdateForm, BalanceForm
-
+from tours.utils import create_transaction
 
 def register(request):
     if request.method == "POST":
@@ -81,17 +81,21 @@ def superuser_view(request):
     
 @login_required
 def become_superuser(request):
+    super_user_payment = settings.SUPER_USER_PAYMENT
+    balance = request.user.profile.balance
     if request.user.is_superuser == True:
         messages.success(request, 'You are already super user')
         return redirect('accounts:profile')
-    if request.user.profile.balance.amount < settings.SUPER_USER_PAYMENT:
+    if balance.amount < super_user_payment:
+        create_transaction(balance, 2, super_user_payment, 'Super user payment', status=5)
         messages.error(request, 'You do not have enough money')
         return redirect('accounts:profile')
         
-    request.user.profile.balance.amount -= settings.SUPER_USER_PAYMENT
-    request.user.profile.balance.save()
+    balance.amount -= super_user_payment
+    balance.save()
     request.user.is_superuser = True
     request.user.save()
+    create_transaction(balance, 2, super_user_payment, 'Super user payment', status=4)
 
     messages.success(request, 'Now you are a superuser and can create your own tour!')
     return redirect('accounts:profile')
@@ -105,8 +109,10 @@ def top_up_balance(request):
         form = BalanceForm(request.POST)
         if form.is_valid():
             amount = form.cleaned_data.get('amount')
-            request.user.profile.balance.amount += amount
-            request.user.profile.balance.save()
+            balance = request.user.profile.balance
+            balance.amount += amount
+            balance.save()
+            create_transaction(balance, 1, amount, 'Balance toping up', status=4)
             messages.success(request, f'You have topped up your balance with ${amount}')
             return redirect('accounts:profile')
     return render(request, 'accounts/balance.html', {'form':form})
