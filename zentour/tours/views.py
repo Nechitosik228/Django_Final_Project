@@ -110,8 +110,6 @@ def tour_editing(request, tour_id):
             form.save()
             messages.success(request, "Tour updated successfully.")
             return redirect("tours:tour_detail", tour_id=tour.id)
-        else:
-            print(form.errors)
     else:
         form = EditTourForm(instance=tour)
     return render(request, "tours/edit_tour.html", {"form": form, "tour": tour})
