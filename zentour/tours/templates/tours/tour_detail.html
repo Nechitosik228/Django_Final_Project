@@ -121,7 +121,7 @@
                     {% endif %}
                 </ul>
                 {% if request.user == tour.user %}
-                    <a href="#" class="btn btn-warning">Edit Tour</a>
+                    <a href="{% url 'tours:tour_edit' tour.id%}" class="btn btn-warning">Edit Tour</a>
                     <a href="#" class="btn btn-danger">Delete Tour</a>
                 {% else %}
                     {% if tour.available %}

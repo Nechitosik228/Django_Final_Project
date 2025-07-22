@@ -1,3 +1,32 @@
 {% extends 'tours/base.html' %}
 
 {% block title %}Edit {{ tour.name }}{% endblock %}
+
+
+{% block content %}
+    <h2>Edit Tour: {{ tour.name }}</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        {% if form.errors %}
+            <div class="alert alert-danger mt-3">
+                <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-success mt-2">Save changes</button>
+    </form>
+
+    <a href="{% url 'tours:tour_detail' tour.id %}" class="btn btn-link mt-2">Back to tour</a>
+{% endblock %}

@@ -105,13 +105,16 @@ def tour_editing(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
 
     if request.method == "POST":
-        form = EditTourForm(request.POST, instance=tour)
+        form = EditTourForm(request.POST, request.FILES, instance=tour)
         if form.is_valid():
             form.save()
             messages.success(request, "Tour updated successfully.")
+            return redirect("tours:tour_detail", tour_id=tour.id)
+        else:
+            print(form.errors)
     else:
         form = EditTourForm(instance=tour)
-    return render(request, {"form": form, "tour": tour})
+    return render(request, "tours/edit_tour.html", {"form": form, "tour": tour})
 
 
 @login_required
