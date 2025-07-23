@@ -102,7 +102,7 @@ def tour_editing(request, tour_id):
 
     if not request.user != tour.user:
         messages.warning(request, "This is not your tour")
-        return redirect("tours:tour_detail")
+        return redirect("tours:tour_detail", tour_id=tour.id)
 
     if request.method == "POST":
         form = EditTourForm(request.POST, request.FILES, instance=tour)
