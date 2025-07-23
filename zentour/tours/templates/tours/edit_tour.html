@@ -1,0 +1,55 @@
+{% extends 'tours/base.html' %}
+
+{% block title %}Edit {{ tour.name }}{% endblock %}
+
+{% block style %}
+    <style>
+        div label {
+            color: white;
+        }
+        div a {
+            color: white;
+        }
+        .card {
+            margin: auto;
+            width: 600px;
+        }
+
+        .white {
+            color: white;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div style="text-align: center;">
+    <div class="card text-bg-primary">
+        <h2 class="white card-header">Edit Tour: {{ tour.name }}</h2>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+                {% if form.errors %}
+                    <div class="alert alert-danger mt-3">
+                        <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                <button type="submit" class="btn btn-success mt-2">Save changes</button>
+            </form>
+
+            <a href="{% url 'tours:tour_detail' tour.id %}" class="btn btn-warning mt-2 white">Back to tour</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

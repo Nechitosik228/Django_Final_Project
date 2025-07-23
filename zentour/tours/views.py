@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from .models import Tour, CartItem, OrderItem, Review
-from .forms import TourForm, ReviewForm, OrderForm
+from .forms import TourForm, ReviewForm, OrderForm, EditTourForm
 from .utils import calculate_star_ranges, create_transaction
 
 
@@ -68,8 +68,8 @@ def create_tour(request):
 
         return render(request, "tours/create_tour.html", {"form": form})
     else:
-        messages.warning(request, 'You are not a super user!')
-        return redirect('accounts:superuser_view')
+        messages.warning(request, "You are not a super user!")
+        return redirect("accounts:superuser_view")
 
 
 def tour_detail(request, tour_id):
@@ -95,6 +95,24 @@ def tour_detail(request, tour_id):
             "empty_stars": stars["empty_stars"],
         },
     )
+
+
+def tour_editing(request, tour_id):
+    tour = get_object_or_404(Tour, id=tour_id)
+
+    if not request.user != tour.user:
+        messages.warning(request, "This is not your tour")
+        return redirect("tours:tour_detail")
+
+    if request.method == "POST":
+        form = EditTourForm(request.POST, request.FILES, instance=tour)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Tour updated successfully.")
+            return redirect("tours:tour_detail", tour_id=tour.id)
+    else:
+        form = EditTourForm(instance=tour)
+    return render(request, "tours/edit_tour.html", {"form": form, "tour": tour})
 
 
 @login_required
