@@ -1,4 +1,5 @@
 import pytest
+import datetime
 
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -26,3 +27,27 @@ def test_tour_with_discount_model(tour_with_discount):
 def test_tour_with_no_tickets_model(tour_with_no_tickets):
     assert tour_with_no_tickets.tickets_amount == 0
     assert tour_with_no_tickets.available == False
+
+
+@pytest.mark.django_db
+def test_tour_updated_at_model(tour):
+    tour.name = 'Test_name'
+    tour.save()
+    assert tour.updated_at == datetime.date.today()
+
+
+@pytest.mark.django_db
+def test_tour_created_at_model(user):
+    tour = Tour.objects.create(
+        user=user,
+        name='Test name1',
+        description='Test description',
+        start_date='2025-01-01',
+        end_date='2025-02-01',
+        price=50,
+        tickets_amount=20,
+        cities='Berlin'
+    )
+    assert tour.created_at == datetime.date.today()
+
+
