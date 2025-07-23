@@ -122,7 +122,6 @@ def cart_detail(request):
         items = []
     else:
         items = cart.items.select_related("tour").all()
-    print(cart)
 
     return render(request, "tours/cart.html", {"cart": cart, "items": items})
 
@@ -149,6 +148,12 @@ def cart_add(request, tour_id):
         cart_item.amount = 1
     else:
         cart_item.amount += 1
+        if tour.tickets_amount < cart_item.amount:
+            messages.warning(request, f'Tickets left for {tour}: {tour.tickets_amount}. You cannot add another ticket!')
+            return redirect('tours:cart_detail')
+        else:
+            cart_item.save()
+        
     cart_item.save()
     return redirect("tours:cart_detail")
 
@@ -170,7 +175,7 @@ def checkout(request):
             order.save()
             cart = getattr(request.user, "cart")
             cart_items = cart.items.select_related("tour").all()
-            OrderItem.objects.bulk_create(
+            order_items = OrderItem.objects.bulk_create(
                 [
                     OrderItem(
                         order=order,
@@ -187,6 +192,9 @@ def checkout(request):
                 balance.amount -= order.total
                 balance.save()
                 create_transaction(balance, 2, order.total, 'Tour purchase', status=4)
+                for order_item in order_items:
+                    order_item.tour.tickets_amount -= order_item.amount
+                    order_item.tour.save()
                 order.is_paid = True
                 order.save()
                 cart.items.all().delete()
