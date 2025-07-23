@@ -17,7 +17,7 @@ class TourForm(forms.ModelForm):
 
     class Meta:
         model = Tour
-        extra_fields = ["start_date", "end_date", "image"]
+        extra_fields = [ "image"]
         fields = [
             "name",
             "description",
@@ -25,6 +25,8 @@ class TourForm(forms.ModelForm):
             "discount",
             "tickets_amount",
             "cities",
+            "start_date", 
+            "end_date",
         ]
 
 
