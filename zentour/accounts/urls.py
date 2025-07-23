@@ -1,7 +1,7 @@
 from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 
-from .views import register, login_view, logout_view, profile, edit_user_profile, superuser_view, become_superuser, top_up_balance
+from .views import register, login_view, logout_view, profile, edit_user_profile, superuser_view, become_superuser, top_up_balance, transactions
 
 app_name = "accounts"
 
@@ -59,5 +59,6 @@ urlpatterns = [
     ),
     path("superuser/", superuser_view, name='superuser_view'),
     path("become-superuser/", become_superuser, name='become_superuser'),
-    path("top-up-balance/", top_up_balance, name='top_up_balance')
+    path("top-up-balance/", top_up_balance, name='top_up_balance'),
+    path("transactions/", transactions, name='transactions'),
 ]

@@ -4,7 +4,7 @@
 
 {% block style %}
     <style type="text/css">
-        img {
+        .image {
             width: 50%;
             border-radius: 40%;
             margin-bottom: 3%;
@@ -35,7 +35,7 @@
             <div class="img">
                 {% if profile.avatar %}
                     <h3 class="white">Current Avatar:</h3>
-                    <img src="{{ profile.avatar.url }}" alt="avatar" width="150">
+                    <img class="image" src="{{ profile.avatar.url }}" alt="avatar" width="150">
                 {% else %}
                     <p>No Avatar</p>
                 {% endif %}

@@ -1,0 +1,61 @@
+{% extends 'tours/base.html' %}
+
+{% block style %}
+    <style type="text/css">
+        .balance {
+            float: left;
+            margin-left: 25%;
+            position: sticky;
+            top: 0;
+            padding: 0;
+        }
+
+        .card {
+            margin-bottom: 5%;
+        }
+
+        .transaction {
+            float: right;
+            margin-right: 25%;   
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div style="text-align: center;">
+    <div class="card text-bg-info balance">
+        <h1 class="card-header" style="color: white;">Your balance:</h1>
+        <div class="card-body">
+            <p style="font-size: 200%; color:white">${{request.user.profile.balance.amount}}</p>
+        </div>
+    </div>
+
+    <div class="transaction">
+        {% for transaction in request.user.profile.balance.transactions.all %}
+            <div class="card text-bg-light border">
+                <h3 class="card-header">{{transaction.category}}</h3>
+                <div class="card-body">
+                    {% if transaction.action == 2 %}
+                        <p style="color: red;">- ${{transaction.money_amount}}</p>
+                    {% else %}
+                        <p style="color: green;">+ ${{transaction.money_amount}}</p>
+                    {% endif %}
+
+                    {% if transaction.status == 4 %}
+                        <p style="color: green;">Completed</p>
+                    {% elif transaction.status == 5 %}
+                        <p style="color: red;">Canceled</p>
+                    {% else %}
+                        <p>{{ transaction.status }}</p>
+                    {% endif %}
+                    <div class="card-footer text-body-secondary">
+                        {{ transaction.date }}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <h3 style="color: white;">No transactions</h3>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -4,7 +4,7 @@
 
 {% block style %}
     <style type="text/css">
-        img {
+        .image {
             float: left;
             width: 40%;
             border-radius: 40%;
@@ -32,7 +32,7 @@
     <div style="text-align: center;">
         <h1 class="white">Profile</h1>
     </div>
-    <img src="{{ profile.avatar.url }}" alt="avatar" width="150">
+    <img src="{{ profile.avatar.url }}" class="image" alt="avatar" width="150">
     <div class="card text-bg-info mb-3" style="max-width: 540px;">
         <div class="card-body">
             <p class="white">Username: {{ request.user.username }}</p>
@@ -48,8 +48,11 @@
         </div>
     </div>
     <div class="card text-bg-info mb-3" style="max-width: 540px;">
-        <p class="card-title white big">Balance: ${{ profile.balance.amount }}</p>
-        <a href="{% url 'accounts:top_up_balance' %}" class="btn btn-success">Top up balance</a>
+        <div class="card-body">
+            <p class="card-title white big">Balance: ${{ profile.balance.amount }}</p>
+            <a href="{% url 'accounts:top_up_balance' %}" class="btn btn-success">Top up balance</a>
+            <a href="{% url 'accounts:transactions' %}" class="btn btn-warning">Transactions</a>
+        </div>
     </div>
     
 {% endblock %}

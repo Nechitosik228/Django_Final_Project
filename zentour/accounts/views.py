@@ -116,3 +116,8 @@ def top_up_balance(request):
             messages.success(request, f'You have topped up your balance with ${amount}')
             return redirect('accounts:profile')
     return render(request, 'accounts/balance.html', {'form':form})
+
+
+@login_required
+def transactions(request):
+    return render(request, 'accounts/transactions.html')

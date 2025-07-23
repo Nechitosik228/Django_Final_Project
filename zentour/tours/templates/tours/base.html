@@ -14,80 +14,78 @@
 </head>
 <body class="d-flex flex-column vh-100" style="background-color: cornflowerblue;">
     <header>
-        <nav class="navbar bg-primary" data-bs-theme="dark">
-            <div class="container d-flex flex-column">
-                <div class="navbar-nav w-100">
-                    <a href="{% url 'tours:home' %}" class="navbar-brand">Homepage</a>
-                </div>
-                <div class="callapse navbar-collapse w-100">
-                    <ul class="navbar-nav ms-auto">
+        <nav class="navbar bg-primary navbar-expand-lg" data-bs-theme="dark">
+            <div class="container-fluid">
+                <a href="{% url 'tours:home' %}" class="navbar-brand">
+                    <img src="\avatars\logo.png" style="border-radius:20%;" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                    Homepage
+                </a>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                  <div class="navbar-nav">
                     {% if request.user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:profile' %}">
-                                Profile: {{ request.user.username }}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:logout' %}">
-                                Log out
-                            </a>
-                        </li>
+                        <a class="nav-link" href="{% url 'accounts:profile' %}">
+                            <img src="{{ request.user.profile.avatar.url }}" style="border-radius:40%;" alt="avatar" width="30" height="30" class="d-inline-block align-text-top">
+                            {{ request.user.username }}
+                        </a>
+                        <a class="nav-link" href="{% url 'accounts:logout' %}">
+                            Log out
+                        </a>
                     {% else %}
-                    <li class="nav-item">
-                        <a href="{% url 'accounts:register' %}" class="navbar-brand">
+                        <a href="{% url 'accounts:register' %}" class="nav-link">
                             Register
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'accounts:login' %}" class="navbar-brand">
+                        <a href="{% url 'accounts:login' %}" class="nav-link">
                             Login
                         </a>
-                    </li>
                     {% endif %}
-                    </ul>
+                  </div>
                 </div>
-                <div class="nav-item text-light">
-                    <form action="{% url 'tours:home' %}" method="GET" class="d-flex mx-auto">
-                        <select name="filter" id="" class="form-select me-3" onchange="this.form.submit()">
-                            <option value="" {% if not request.GET.filter  %}
-                            selected    
-                            {% endif %}>
-                                Filter:
-                            </option>
-                            <option value="increase_price" {% if request.GET.filter == 'increase_price'  %}
-                            selected    
-                            {% endif %}>
-                                Increasing price
-                            </option>
-                            <option value="decrease_price" {% if request.GET.filter == 'decrease_price'  %}
-                            selected    
-                            {% endif %}>
-                                Decreasing price
-                            </option>
-                            <option value="increase_rating" {% if request.GET.filter == 'increase_rating'  %}
-                            selected    
-                            {% endif %}>
-                                Increasing rating
-                            </option>
-                            <option value="decrease_rating" {% if request.GET.filter == 'decrease_rating'  %}
-                            selected    
-                            {% endif %}>
-                                Decreasing rating
-                            </option>
-                        </select>
-                        <input type="search" name="search" class="form-control me-3" placeholder="search tours" onchange="this.form.submit()" value="{{ request.GET.search|default:'' }}">
-                        
-                        <label for="min_price">Minimum price</label>
-                        <input type="number" name="min_price" class="w-25 form-control" min="0" onchange="this.form.submit()" value="{{ request.GET.min_price|default:'' }}">
-                        <label for="max_price">Maximum price</label>
-                        <input type="number" name="max_price" class="w-25 form-control" min="0" onchange="this.form.submit()" value="{{ request.GET.max_price|default:'' }}">
+            </div>
+                {% if request.path == '/tours/home/' %}
+                    <div class="nav-item text-light">
+                        <form action="{% url 'tours:home' %}" method="GET" class="d-flex mx-auto">
+                            <select name="filter" id="" class="form-select me-3" onchange="this.form.submit()" style="width: 200px;">
+                                <option value="" {% if not request.GET.filter  %}
+                                selected    
+                                {% endif %}>
+                                    Filter:
+                                </option>
+                                <option value="increase_price" {% if request.GET.filter == 'increase_price'  %}
+                                selected    
+                                {% endif %}>
+                                    Increasing price
+                                </option>
+                                <option value="decrease_price" {% if request.GET.filter == 'decrease_price'  %}
+                                selected    
+                                {% endif %}>
+                                    Decreasing price
+                                </option>
+                                <option value="increase_rating" {% if request.GET.filter == 'increase_rating'  %}
+                                selected    
+                                {% endif %}>
+                                    Increasing rating
+                                </option>
+                                <option value="decrease_rating" {% if request.GET.filter == 'decrease_rating'  %}
+                                selected    
+                                {% endif %}>
+                                    Decreasing rating
+                                </option>
+                            </select>
+                            <input type="search" name="search" style="width: 300px;" class="form-control me-3" placeholder="search tours" onchange="this.form.submit()" value="{{ request.GET.search|default:'' }}">
+                            
+                            <label for="min_price">Minimum price</label>
+                            <input type="number" name="min_price" class="w-60 form-control me-3" min="0" onchange="this.form.submit()" value="{{ request.GET.min_price|default:'' }}">
+                            <label for="max_price">Maximum price</label>
+                            <input type="number" name="max_price" class="w-60 form-control me-3" min="0" onchange="this.form.submit()" value="{{ request.GET.max_price|default:'' }}">
 
-                        <label for="start_date">Start date</label>
-                        <input type="date" name="start_date" class="w-25 form-control" onchange="this.form.submit()" value="{{ request.GET.start_date|default:'' }}">
-                        <label for="end_date">End date</label>
-                        <input type="date" name="end_date" class="w-25 form-control" onchange="this.form.submit()" value="{{ request.GET.end_date|default:'' }}">
-                    </form>
-                </div>
+                            <label for="start_date">Start date</label>
+                            <input type="date" name="start_date" class="w-25 form-control me-3" onchange="this.form.submit()" value="{{ request.GET.start_date|default:'' }}">
+                            <label for="end_date">End date</label>
+                            <input type="date" name="end_date" class="w-25 form-control" onchange="this.form.submit()" value="{{ request.GET.end_date|default:'' }}">
+                        </form>
+                    </div>  
+                {% endif %}
+                
             </div>
         </nav>
     </header>
