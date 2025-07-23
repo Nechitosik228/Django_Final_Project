@@ -98,11 +98,11 @@ def tour_detail(request, tour_id):
 
 
 def tour_editing(request, tour_id):
-    if not request.user.is_superuser:
-        messages.warning(request, "You are not a superuser!")
-        return redirect("accounts:superuser_view")
-
     tour = get_object_or_404(Tour, id=tour_id)
+
+    if not request.user != tour.user:
+        messages.warning(request, "This is not your tour")
+        return redirect("tours:tour_detail")
 
     if request.method == "POST":
         form = EditTourForm(request.POST, request.FILES, instance=tour)
