@@ -10,7 +10,8 @@ from .views import (
     submit_review,
     checkout,
     tour_editing,
-    delete_tour
+    delete_tour,
+    delete_review
 )
 
 
@@ -27,5 +28,6 @@ urlpatterns = [
     path("submit-review/<int:tour_id>/", submit_review, name="submit_review"),
     path("checkout/", checkout, name="checkout"),
     path("edit/<int:tour_id>/", tour_editing, name="tour_edit"),
-    path("delete/<int:tour_id>/", delete_tour, name="delete_tour")
+    path("delete/<int:tour_id>/", delete_tour, name="delete_tour"),
+    path("delete_review/<int:review_id>/", delete_review, name="delete_review")
 ]

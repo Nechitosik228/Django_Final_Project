@@ -184,6 +184,9 @@
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item"><p>{{ review.comment }}</p></li>
                         </ul>
+                        {% if request.user == review.user %}
+                            <a href="{% url 'tours:delete_review' review.id%}" class="btn btn-danger">Delete Review</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

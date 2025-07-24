@@ -256,3 +256,22 @@ def submit_review(request, tour_id):
     else:
         form = ReviewForm(instance=review)
     return render(request, "tours/tour_detail.html", {"form": form, "tour": tour})
+
+
+@login_required
+def delete_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+
+    if request.user != review.user:
+        messages.error(request, 'You are not the creator of this review!')
+        return redirect('tours:tour_detail', tour_id=review.tour.id)
+    
+    if request.method == 'GET':
+        return render(request, 'tours/delete_review.html')
+    else:
+        if request.POST.get('answer') == 'Yes':
+            review.delete()
+            messages.success(request, 'You deleted your review')
+            return redirect('tours:tour_detail', tour_id=review.tour.id)
+        else:
+            return redirect('tours:tour_detail', tour_id=review.tour.id)
