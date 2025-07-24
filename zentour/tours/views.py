@@ -96,7 +96,7 @@ def tour_detail(request, tour_id):
         },
     )
 
-
+@login_required
 def tour_editing(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
 
@@ -113,6 +113,25 @@ def tour_editing(request, tour_id):
     else:
         form = EditTourForm(instance=tour)
     return render(request, "tours/edit_tour.html", {"form": form, "tour": tour})
+
+
+@login_required
+def delete_tour(request, tour_id):
+    tour = get_object_or_404(Tour, id=tour_id)
+
+    if request.user != tour.user:
+        messages.error(request, 'You are not the creator of this tour!')
+        return redirect('tours:tour_detail', tour_id=tour_id)
+    
+    if request.method == 'GET':
+        return render(request, 'tours/delete_tour.html', {'tour':tour})
+    else:
+        if request.POST.get('answer') == 'Yes':
+            tour.delete()
+            messages.success(request, 'You deleted your tour')
+            return redirect('tours:home')
+        else:
+            return redirect('tours:tour_detail', tour_id=tour_id)
 
 
 @login_required

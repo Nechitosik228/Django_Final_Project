@@ -1,0 +1,33 @@
+{% extends 'tours/base.html' %}
+
+{% block title %}Delete {{ tour }}{% endblock %}
+
+{% block style %}
+    <style type="text/css">
+        .card {
+            width: 25%;
+            margin: auto;
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div style="text-align: center;">
+        <div class="card text-bg-danger">
+            <form method="post">
+                {% csrf_token %}
+                <p class="card-header" style="color: white;">Are you sure you want to delete <strong>{{ tour }}</strong>?</p>
+                <div class="card-body">
+                    <select name="answer">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="card-footer">
+                <input type="submit" value="Submit" class="btn btn-success">
+            </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
