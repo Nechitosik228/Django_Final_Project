@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import Tour, CartItem, OrderItem, Review
+from .models import Tour, CartItem, OrderItem, Review, BoughtTour
 from .forms import TourForm, ReviewForm, OrderForm, EditTourForm
 from .utils import calculate_star_ranges, create_transaction
 
@@ -74,6 +74,7 @@ def create_tour(request):
 
 def tour_detail(request, tour_id):
     tour = get_object_or_404(Tour.objects.prefetch_related("reviews__user"), id=tour_id)
+    print(tour.should_delete)
     form = ReviewForm() if request.user.is_authenticated else None
 
     stars = calculate_star_ranges(tour.rating)
@@ -100,7 +101,7 @@ def tour_detail(request, tour_id):
 def tour_editing(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
 
-    if not request.user != tour.user:
+    if request.user != tour.user:
         messages.warning(request, "This is not your tour")
         return redirect("tours:tour_detail", tour_id=tour.id)
 
@@ -127,11 +128,23 @@ def delete_tour(request, tour_id):
         return render(request, 'tours/delete_tour.html', {'tour':tour})
     else:
         if request.POST.get('answer') == 'Yes':
+            bought_tours = BoughtTour.objects.filter(tour=tour).all()
+            if bought_tours:
+                for bought_tour in bought_tours:
+                    bought_tour.user.profile.balance.amount += bought_tour.price
+                    bought_tour.user.profile.balance.save()
+                    create_transaction(bought_tour.user.profile.balance, 1, bought_tour.price, f'Tour {tour} tickets return', 4)
             tour.delete()
             messages.success(request, 'You deleted your tour')
             return redirect('tours:home')
         else:
             return redirect('tours:tour_detail', tour_id=tour_id)
+
+
+@login_required
+def users_bought_tours(request):
+    bought_tours = request.user.bought_tours.all()
+    return render(request, 'tours/users_tours.html', {'bought_tours':bought_tours})
 
 
 @login_required
@@ -164,7 +177,12 @@ def cart_add(request, tour_id):
     cart = request.user.cart
     cart_item, create = CartItem.objects.get_or_create(cart=cart, tour=tour)
     if create:
-        cart_item.amount = 1
+        if tour.tickets_amount > 0:
+            cart_item.amount = 1
+        else:
+            cart_item.delete()
+            messages.warning(request, f'Tickets left for {tour}: {tour.tickets_amount}. You cannot buy this tour!')
+            return redirect('tours:tour_detail', tour_id=tour.id)
     else:
         cart_item.amount += 1
         if tour.tickets_amount < cart_item.amount:
@@ -210,10 +228,16 @@ def checkout(request):
                 order.status = 2
                 balance.amount -= order.total
                 balance.save()
-                create_transaction(balance, 2, order.total, 'Tour purchase', status=4)
                 for order_item in order_items:
+                    create_transaction(balance, 2, order_item.item_total, f'Tour {order_item.tour} purchase', status=4)
                     order_item.tour.tickets_amount -= order_item.amount
                     order_item.tour.save()
+                    BoughtTour.objects.create(
+                        user=request.user,
+                        tour=order_item.tour,
+                        amount=order_item.amount,
+                        price=order_item.item_total
+                    )
                 order.is_paid = True
                 order.save()
                 cart.items.all().delete()

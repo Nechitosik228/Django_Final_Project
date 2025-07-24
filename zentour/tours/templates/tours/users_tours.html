@@ -1,0 +1,62 @@
+{% extends 'tours/base.html' %}
+
+{% block title %}
+    Bought Tours
+{% endblock %}
+
+{% block style %}
+    <style type="text/css">
+        .img-fluid {
+            width: 100%;
+            height: 100%; 
+            object-fit: cover;
+        }
+
+        .card {
+            padding: 0;
+            margin-top: 5%;
+            margin-right: 7%;
+        }
+
+        .white {
+            color: white;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1 class="white">Your bought tours:</h1>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for bought_tour in bought_tours %}
+            <div class="card text-bg-info mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{{ bought_tour.tour.image.url|default:'https://fotografie.at/galerie/userImages/33/484922-33adeea9.jpg' }}" class="img-fluid rounded-start" alt="{{ tour.name }}">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title white">{{ bought_tour.tour.name }}</h5>
+                            <p class="card-text white">{{ bought_tour.tour.description|truncatewords:15 }}</p>
+                            <div>
+                                {% for _ in bought_tour.tour.full_stars %}
+                                    <span class="fa fa-star checked"></span>
+                                {% endfor %}
+                                {% if bought_tour.tour.has_half_star %}
+                                    <span class="fa fa-star-half-o checked"></span>
+                                {% endif %}
+                                {% for _ in bought_tour.tour.empty_stars %}
+                                    <span class="fa fa-star"></span>
+                                {% endfor %}
+                                <p class="white">Tickets amount: {{ bought_tour.amount }}</p>
+                                <p class="white">Price: ${{ bought_tour.price }}</p>
+                                <a href="{% url 'tours:tour_detail' bought_tour.tour.id %}" class="btn btn-primary">Go to tour!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <h4 class="white">You do not have any bought tours</h4>
+        {% endfor %}
+    </div>
+{% endblock %}

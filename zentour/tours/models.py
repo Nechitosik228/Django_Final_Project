@@ -15,8 +15,8 @@ class Tour(models.Model):
     end_date = models.DateField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
     image = models.ImageField(upload_to="tour_images/", null=True)
-    discount = models.IntegerField(default=0)
-    tickets_amount = models.IntegerField()
+    discount = models.PositiveIntegerField(default=0)
+    tickets_amount = models.PositiveIntegerField()
     cities = models.CharField(max_length=250)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
@@ -55,6 +55,15 @@ class Tour(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class BoughtTour(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, related_name="bought_tours", null=True
+    )
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
+    amount = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
 
 
 class Review(models.Model):
