@@ -30,10 +30,6 @@ def home(request):
         tours = tours.order_by("-price")
     elif filter == "increase_price":
         tours = tours.order_by("price")
-    elif filter == "increase_rating":
-        tours = tours.order_by("rating")
-    elif filter == "decrease_rating":
-        tours = tours.order_by("-rating")
 
     for tour in tours:
         stars = calculate_star_ranges(tour.rating)

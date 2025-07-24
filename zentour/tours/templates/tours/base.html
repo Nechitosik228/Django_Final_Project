@@ -36,9 +36,7 @@
                             <a class="nav-link" href="{% url 'accounts:superuser_view' %}">Become super user</a>
                         {% endif %}
                         <a class="nav-link" href="{% url 'tours:cart_detail' %}">Cart</a>
-                        {% if request.user.bought_tours %}
-                            <a class="nav-link" href="{% url 'tours:users_bought_tours' %}">Purchased tours</a>
-                        {% endif %}
+                        <a class="nav-link" href="{% url 'tours:users_bought_tours' %}">Purchased tours</a>
                     {% else %}
                         <a href="{% url 'accounts:register' %}" class="nav-link">
                             Register
@@ -53,7 +51,7 @@
                 {% if request.path == '/tours/home/' %}
                     <div class="nav-item text-light">
                         <form action="{% url 'tours:home' %}" method="GET" class="d-flex mx-auto">
-                            <select name="filter" id="" class="form-select me-3" onchange="this.form.submit()" style="width: 170px;">
+                            <select name="filter" id="" class="form-select me-3" onchange="this.form.submit()" style="width: 120px;">
                                 <option value="" {% if not request.GET.filter  %}
                                 selected    
                                 {% endif %}>
@@ -69,18 +67,8 @@
                                 {% endif %}>
                                     Decreasing price
                                 </option>
-                                <option value="increase_rating" {% if request.GET.filter == 'increase_rating'  %}
-                                selected    
-                                {% endif %}>
-                                    Increasing rating
-                                </option>
-                                <option value="decrease_rating" {% if request.GET.filter == 'decrease_rating'  %}
-                                selected    
-                                {% endif %}>
-                                    Decreasing rating
-                                </option>
                             </select>
-                            <input type="search" name="search" style="width: 150px;" class="form-control me-3" placeholder="search tours" onchange="this.form.submit()" value="{{ request.GET.search|default:'' }}">
+                            <input type="search" name="search" style="width: 123px;" class="form-control me-3" placeholder="search tours" onchange="this.form.submit()" value="{{ request.GET.search|default:'' }}">
                             
                             <label for="min_price">Minimum price</label>
                             <input type="number" name="min_price" style="width: 60px;" class="form-control me-3" min="0" onchange="this.form.submit()" value="{{ request.GET.min_price|default:'' }}">
@@ -88,9 +76,9 @@
                             <input type="number" name="max_price" style="width: 60px;" class="form-control me-3" min="0" onchange="this.form.submit()" value="{{ request.GET.max_price|default:'' }}">
 
                             <label for="start_date">Start date</label>
-                            <input type="date" name="start_date" class="w-25 form-control me-3" onchange="this.form.submit()" value="{{ request.GET.start_date|default:'' }}">
+                            <input type="date" name="start_date" style="width: 150px;" class="form-control me-3" onchange="this.form.submit()" value="{{ request.GET.start_date|default:'' }}">
                             <label for="end_date">End date</label>
-                            <input type="date" name="end_date" class="w-25 form-control" onchange="this.form.submit()" value="{{ request.GET.end_date|default:'' }}">
+                            <input type="date" name="end_date" style="width: 150px;" class="form-control" onchange="this.form.submit()" value="{{ request.GET.end_date|default:'' }}">
                         </form>
                     </div>  
                 {% endif %}
