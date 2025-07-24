@@ -36,6 +36,9 @@
                             <a class="nav-link" href="{% url 'accounts:superuser_view' %}">Become super user</a>
                         {% endif %}
                         <a class="nav-link" href="{% url 'tours:cart_detail' %}">Cart</a>
+                        {% if request.user.bought_tours %}
+                            <a class="nav-link" href="{% url 'tours:users_bought_tours' %}">Purchased tours</a>
+                        {% endif %}
                     {% else %}
                         <a href="{% url 'accounts:register' %}" class="nav-link">
                             Register

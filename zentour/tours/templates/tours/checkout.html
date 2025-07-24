@@ -2,11 +2,26 @@
 
 {% block title %}Checkout{% endblock %}
 
+{% block style %}
+    <style type="text/css">
+        .card {
+            margin: auto;
+            width: 40%;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-    <h2>Order payment</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Submit" class="btn btn-primary">
-    </form>
+    <div style="text-align: center;">
+        <div class="card text-bg-primary">
+            <h2 class="card-header">Order payment</h2>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" value="Submit" class="btn btn-success">
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
