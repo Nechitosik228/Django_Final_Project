@@ -1,7 +1,6 @@
 import pytest
 import datetime
 
-from zoneinfo import ZoneInfo
 from django.contrib.auth.models import User
 from django.urls import reverse
 
@@ -128,3 +127,7 @@ def test_cart_item_default_amount_model(tour):
     )
 
     assert cart_item.amount == 1
+
+@pytest.mark.django_db
+def test_cart_item_str_function_model(cart_item):
+    assert cart_item.__str__() == f'{cart_item.tour.name}: {cart_item.amount}'
