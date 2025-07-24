@@ -74,7 +74,6 @@ def create_tour(request):
 
 def tour_detail(request, tour_id):
     tour = get_object_or_404(Tour.objects.prefetch_related("reviews__user"), id=tour_id)
-    print(tour.should_delete)
     form = ReviewForm() if request.user.is_authenticated else None
 
     stars = calculate_star_ranges(tour.rating)
@@ -134,6 +133,9 @@ def delete_tour(request, tour_id):
                     bought_tour.user.profile.balance.amount += bought_tour.price
                     bought_tour.user.profile.balance.save()
                     create_transaction(bought_tour.user.profile.balance, 1, bought_tour.price, f'Tour {tour} tickets return', 4)
+                    request.user.profile.balance.amount -= bought_tour.price
+                    request.user.profile.balance.save()
+                    create_transaction(request.user.profile.balance, 2, bought_tour.price, f'Tour {tour} tickets return', 4)
             tour.delete()
             messages.success(request, 'You deleted your tour')
             return redirect('tours:home')
@@ -232,12 +234,21 @@ def checkout(request):
                     create_transaction(balance, 2, order_item.item_total, f'Tour {order_item.tour} purchase', status=4)
                     order_item.tour.tickets_amount -= order_item.amount
                     order_item.tour.save()
-                    BoughtTour.objects.create(
+                    order_item.tour.user.profile.balance.amount += order_item.item_total
+                    order_item.tour.user.profile.balance.save()
+                    create_transaction(order_item.tour.user.profile.balance, 1, order_item.item_total, f'Profit from Tour {order_item.tour}', status=4)
+                    bought_tour, create = BoughtTour.objects.get_or_create(
                         user=request.user,
                         tour=order_item.tour,
-                        amount=order_item.amount,
-                        price=order_item.item_total
                     )
+                    if create:
+                        bought_tour.price = order_item.item_total
+                        bought_tour.amount = order_item.amount
+                        bought_tour.save()
+                    else:
+                        bought_tour.amount += order_item.amount
+                        bought_tour.price += order_item.item_total
+                        bought_tour.save()
                 order.is_paid = True
                 order.save()
                 cart.items.all().delete()
