@@ -1,6 +1,7 @@
 import pytest
 import datetime
 
+from zoneinfo import ZoneInfo
 from django.contrib.auth.models import User
 from django.urls import reverse
 
@@ -67,3 +68,29 @@ def test_tour_two_cartitem_model(user, cart_item_with_discount, cart_item):
     assert cart_item_with_discount, cart_item in user.cart.items.all()
     assert cart_item_with_discount.total_price == cart_item_with_discount.tour.discount_price * cart_item_with_discount.amount
     assert user.cart.total == sum(item.total_price for item in user.cart.items.all())
+
+
+@pytest.mark.django_db
+def test_cart_total_model(tour, tour_with_discount):
+    user = User.objects.create(
+        username='Some name',
+        password='some password'
+    )
+    
+    cart_item1 = CartItem.objects.create(
+        cart=user.cart,
+        tour=tour,
+        amount=2
+    )
+
+    cart_item2 = CartItem.objects.create(
+        cart=user.cart,
+        tour=tour_with_discount,
+        amount=3
+    )
+
+    two_cart_items_price = 0
+    two_cart_items_price += cart_item1.total_price
+    two_cart_items_price += cart_item2.total_price
+
+    assert user.cart.total == two_cart_items_price
