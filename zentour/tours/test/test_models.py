@@ -109,3 +109,22 @@ def test_cart_one_item_total_model(tour):
     )
 
     assert user.cart.total == cart_item1.total_price
+
+
+@pytest.mark.django_db
+def test_cart_item_total_price_model(tour, cart_item):
+    assert tour.discount_price * cart_item.amount == cart_item.total_price
+
+@pytest.mark.django_db
+def test_cart_item_default_amount_model(tour):
+    user = User.objects.create(
+        username='Some name',
+        password='some password'
+    )
+
+    cart_item = CartItem.objects.create(
+        tour=tour,
+        cart=user.cart
+    )
+
+    assert cart_item.amount == 1

@@ -50,7 +50,8 @@ def tour_with_no_tickets(user):
 def cart_item(user, tour):
     return CartItem.objects.create(
         cart=user.cart,
-        tour=tour
+        tour=tour,
+        amount=1
     )
 
 
