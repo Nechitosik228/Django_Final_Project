@@ -44,3 +44,20 @@ def tour_with_no_tickets(user):
         tickets_amount=0,
         cities='Berlin'
     )
+
+
+@pytest.fixture
+def cart_item(user, tour):
+    return CartItem.objects.create(
+        cart=user.cart,
+        tour=tour
+    )
+
+
+@pytest.fixture
+def cart_item_with_discount(user, tour_with_discount):
+    return CartItem.objects.create(
+        cart=user.cart,
+        tour=tour_with_discount,
+        amount=3
+    )

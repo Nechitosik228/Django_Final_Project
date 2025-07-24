@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from accounts.models import Profile
 from tours.models import Cart, Tour, Review, CartItem, Order, OrderItem
-from .fixtures import tour, tour_with_discount, tour_with_no_tickets
+from .fixtures import tour, tour_with_discount, tour_with_no_tickets, cart_item, cart_item_with_discount
 
 
 @pytest.mark.django_db
@@ -50,4 +50,20 @@ def test_tour_created_at_model(user):
     )
     assert tour.created_at == datetime.date.today()
 
+@pytest.mark.django_db
+def test_cart_auto_creation_model(user):
+    assert user.cart
 
+
+@pytest.mark.django_db
+def test_tour_cartitem_model(user, tour, cart_item):
+    assert cart_item.tour == tour
+    assert cart_item.amount == 1
+    assert cart_item.total_price == tour.discount_price
+    assert cart_item in user.cart.items.all()
+
+@pytest.mark.django_db
+def test_tour_two_cartitem_model(user, cart_item_with_discount, cart_item):
+    assert cart_item_with_discount, cart_item in user.cart.items.all()
+    assert cart_item_with_discount.total_price == cart_item_with_discount.tour.discount_price * cart_item_with_discount.amount
+    assert user.cart.total == sum(item.total_price for item in user.cart.items.all())
