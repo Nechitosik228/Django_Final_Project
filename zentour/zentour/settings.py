@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tours',
     'accounts',
-    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
