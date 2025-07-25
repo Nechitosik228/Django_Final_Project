@@ -131,11 +131,10 @@ class OrderItem(models.Model):
     )
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
     amount = models.IntegerField(default=1)
-    price = models.DecimalField(max_digits=7, decimal_places=2)
 
     @property
     def item_total(self):
         return self.tour.discount_price * self.amount
 
     def __str__(self):
-        return f"{self.order.id} : {self.tour.name} : {self.amount} : ${self.price}"
+        return f"{self.order.id} : {self.tour.name} : {self.amount} : ${self.item_total}"

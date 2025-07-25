@@ -131,3 +131,37 @@ def test_cart_item_default_amount_model(tour):
 @pytest.mark.django_db
 def test_cart_item_str_function_model(cart_item):
     assert cart_item.__str__() == f'{cart_item.tour.name}: {cart_item.amount}'
+
+
+@pytest.mark.django_db
+def test_order_default_fields_model(user):
+    order = Order.objects.create(
+        user=user,
+        contact_name='Vasya',
+        contact_email='example@gmail.com',
+        address='Some address'
+    )
+
+    assert order.is_paid == False
+    assert not order.items.all() 
+    assert order.contact_phone == "000-000-0000"
+    assert order in user.orders.all()
+
+
+@pytest.mark.django_db
+def test_order_total_model(user, tour):
+    order = Order.objects.create(
+        user=user,
+        contact_name='Vasya',
+        contact_email='example@gmail.com',
+        address='Some address'
+    )
+
+    order_item1 = OrderItem.objects.create(
+        order=order,
+        tour=tour
+    )
+
+    assert order_item1.amount == 1
+    assert order.total == order_item1.item_total
+    assert order.total == tour.discount_price

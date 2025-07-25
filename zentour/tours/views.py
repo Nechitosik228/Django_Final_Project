@@ -216,7 +216,6 @@ def checkout(request):
                         order=order,
                         tour=item.tour,
                         amount=item.amount,
-                        price=item.tour.discount_price,
                     )
                     for item in cart_items
                 ]
