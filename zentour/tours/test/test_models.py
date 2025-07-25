@@ -165,3 +165,27 @@ def test_order_total_model(user, tour):
     assert order_item1.amount == 1
     assert order.total == order_item1.item_total
     assert order.total == tour.discount_price
+
+
+@pytest.mark.django_db
+def test_order_two_items_total_model(user, tour, tour_with_discount):
+    order = Order.objects.create(
+        user=user,
+        contact_name='Vasya',
+        contact_email='example@gmail.com',
+        address='Some address'
+    )
+
+    order_item1 = OrderItem.objects.create(
+        order=order,
+        tour=tour
+    )
+
+    order_item2 = OrderItem.objects.create(
+        order=order,
+        tour=tour_with_discount,
+    )
+
+    assert order_item2.item_total == tour_with_discount.discount_price
+    assert order_item1.item_total == tour.price
+    assert order.total == sum(order_item.item_total for order_item in order.items.all())
