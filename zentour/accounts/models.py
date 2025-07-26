@@ -23,8 +23,10 @@ class Transaction(models.Model):
 
     status = models.IntegerField(choices=Choices, default=Choices.NEW)
     action = models.IntegerField(choices=Action, default=Action.TOPING_UP)
-    balance = models.ForeignKey(Balance, on_delete=models.CASCADE, related_name='transactions')
-    category = models.CharField(max_length=200, default='')
+    balance = models.ForeignKey(
+        Balance, on_delete=models.CASCADE, related_name="transactions"
+    )
+    category = models.CharField(max_length=200, default="")
     money_amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)
 
