@@ -80,20 +80,14 @@ def test_balance_str(user):
 
 
 @pytest.mark.django_db
-def test_balance_updated_after_transaction(balance):
-    Transaction.objects.create(
-        balance=balance,
-        action=Transaction.Action.TOPING_UP,
-        status=Transaction.Choices.COMPLETED,
-        money_amount=200,
-        category="Test top up",
-    )
+def test_balance_updated_after_transaction(balance, completed_transaction):
+    
 
-    balance.amount += 200
+    balance.amount += completed_transaction.money_amount
     balance.save()
 
     updated = Balance.objects.get(id=balance.id)
-    assert updated.amount == 200
+    assert updated.amount == 100
 
 
 @pytest.mark.django_db
