@@ -97,28 +97,10 @@ def test_balance_updated_after_transaction(balance):
 
 
 @pytest.mark.django_db
-def test_multiple_transactions_and_total(balance):
-    Transaction.objects.create(
-        balance=balance,
-        action=Transaction.Action.TOPING_UP,
-        status=Transaction.Choices.COMPLETED,
-        money_amount=150,
-        category="Top up 1",
-    )
-    Transaction.objects.create(
-        balance=balance,
-        action=Transaction.Action.WITHDRAWING,
-        status=Transaction.Choices.COMPLETED,
-        money_amount=50,
-        category="Withdrawal",
-    )
-    Transaction.objects.create(
-        balance=balance,
-        action=Transaction.Action.TOPING_UP,
-        status=Transaction.Choices.NEW,
-        money_amount=300,
-        category="Top up 2",
-    )
+def test_multiple_transactions_and_total(
+    balance, completed_transaction, completed_transaction_withdraw, transaction
+):
+
     completed_transactions = balance.transactions.filter(
         status=Transaction.Choices.COMPLETED
     )
@@ -132,7 +114,7 @@ def test_multiple_transactions_and_total(balance):
         for t in completed_transactions
         if t.action == Transaction.Action.WITHDRAWING
     )
-    assert total_top_up == 150
+    assert total_top_up == 100
     assert total_withdraw == 50
 
 
@@ -157,3 +139,13 @@ def test_balance_cascade_deletes_transactions(
 @pytest.mark.django_db
 def test_transaction_default_category(transaction_default_category):
     assert transaction_default_category.category == ""
+
+
+@pytest.mark.django_db
+def test_transaction_status_choices(transaction):
+    assert transaction.status in [t.value for t in Transaction.Choices]
+
+
+@pytest.mark.django_db
+def test_transaction_action_choices(transaction):
+    assert transaction.action in [t.value for t in Transaction.Action]
