@@ -3,6 +3,7 @@ import uuid
 
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 @pytest.mark.django_db
@@ -86,3 +87,55 @@ def test_logout_view(client, user):
 
     response = client.get(reverse("tours:home"))
     assert not response.wsgi_request.user.is_authenticated
+
+
+@pytest.mark.django_db
+def test_profile_view_authenticated(client, user):
+    client.login(username=user.username, password="password_test_user")
+
+    url = reverse("accounts:profile")
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert "profile" in response.context
+    assert str(response.context["profile"].user) == user.username
+    assert b"profile" in response.content.lower()
+
+
+@pytest.mark.django_db
+def test_profile_view_unauthenticated(client):
+    url = reverse("accounts:profile")
+    response = client.get(url)
+
+    assert response.status_code == 302
+    assert response.url.startswith(reverse("accounts:login"))
+
+
+@pytest.mark.django_db
+def test_edit_user_profile_post_email_update(client, user):
+    client.login(username=user.username, password="password_test_user")
+    url = reverse("accounts:edit_profile")
+
+    new_email = "updated@example.com"
+    form_data = {
+        "email": new_email,
+    }
+
+    response = client.post(url, data=form_data)
+
+    user.refresh_from_db()
+    assert response.status_code == 302
+    assert response.url == reverse("accounts:profile")
+    assert user.email == new_email
+
+
+@pytest.mark.django_db
+def test_edit_user_profile_get(client, user):
+    client.login(username=user.username, password="password_test_user")
+    url = reverse("accounts:edit_profile")
+
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert "form" in response.context
+    assert b"edit" in response.content.lower()
