@@ -7,6 +7,7 @@ from django.contrib import messages
 from .forms import RegisterForm, LoginForm, ProfileUpdateForm, BalanceForm
 from tours.utils import create_transaction
 
+
 def register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -74,50 +75,54 @@ def edit_user_profile(request):
 @login_required
 def superuser_view(request):
     if request.user.is_superuser == True:
-        messages.success(request, 'You are already super user')
-        return redirect('accounts:profile')
-    return render(request, 'accounts/superuser.html', {'payment': settings.SUPER_USER_PAYMENT})
+        messages.success(request, "You are already super user")
+        return redirect("accounts:profile")
+    return render(
+        request, "accounts/superuser.html", {"payment": settings.SUPER_USER_PAYMENT}
+    )
 
-    
+
 @login_required
 def become_superuser(request):
     super_user_payment = settings.SUPER_USER_PAYMENT
     balance = request.user.profile.balance
     if request.user.is_superuser == True:
-        messages.success(request, 'You are already super user')
-        return redirect('accounts:profile')
+        messages.success(request, "You are already super user")
+        return redirect("accounts:profile")
     if balance.amount < super_user_payment:
-        create_transaction(balance, 2, super_user_payment, 'Super user payment', status=5)
-        messages.error(request, 'You do not have enough money')
-        return redirect('accounts:profile')
-        
+        create_transaction(
+            balance, 2, super_user_payment, "Super user payment", status=5
+        )
+        messages.error(request, "You do not have enough money")
+        return redirect("accounts:profile")
+
     balance.amount -= super_user_payment
     balance.save()
     request.user.is_superuser = True
     request.user.save()
-    create_transaction(balance, 2, super_user_payment, 'Super user payment', status=4)
+    create_transaction(balance, 2, super_user_payment, "Super user payment", status=4)
 
-    messages.success(request, 'Now you are a superuser and can create your own tour!')
-    return redirect('accounts:profile')
+    messages.success(request, "Now you are a superuser and can create your own tour!")
+    return redirect("accounts:profile")
 
 
 @login_required
 def top_up_balance(request):
-    if request.method == 'GET':
+    if request.method == "GET":
         form = BalanceForm()
     else:
         form = BalanceForm(request.POST)
         if form.is_valid():
-            amount = form.cleaned_data.get('amount')
+            amount = form.cleaned_data.get("amount")
             balance = request.user.profile.balance
             balance.amount += amount
             balance.save()
-            create_transaction(balance, 1, amount, 'Balance toping up', status=4)
-            messages.success(request, f'You have topped up your balance with ${amount}')
-            return redirect('accounts:profile')
-    return render(request, 'accounts/balance.html', {'form':form})
+            create_transaction(balance, 1, amount, "Balance toping up", status=4)
+            messages.success(request, f"You have topped up your balance with ${amount}")
+            return redirect("accounts:profile")
+    return render(request, "accounts/balance.html", {"form": form})
 
 
 @login_required
 def transactions(request):
-    return render(request, 'accounts/transactions.html')
+    return render(request, "accounts/transactions.html")
