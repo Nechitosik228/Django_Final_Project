@@ -1,10 +1,18 @@
 import pytest
 
 from django.contrib.auth.models import User
+from django.db.utils import IntegrityError
 
 from accounts.models import Balance, Transaction, Profile
 from tours.models import Cart, Order, Review, BoughtTour
-from .fixtures import profile, balance, transaction
+from .fixtures import (
+    profile,
+    balance,
+    transaction,
+    completed_transaction,
+    completed_transaction_withdraw,
+    transaction_default_category,
+)
 
 
 @pytest.mark.django_db
@@ -126,3 +134,26 @@ def test_multiple_transactions_and_total(balance):
     )
     assert total_top_up == 150
     assert total_withdraw == 50
+
+
+@pytest.mark.django_db
+def test_user_profile_uniqueness(user):
+    with pytest.raises(IntegrityError):
+        Profile.objects.create(user=user, balance=Balance.objects.create())
+
+
+@pytest.mark.django_db
+def test_balance_cascade_deletes_transactions(
+    balance, completed_transaction_withdraw, completed_transaction
+):
+
+    assert Transaction.objects.count() == 2
+
+    balance.delete()
+
+    assert Transaction.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_transaction_default_category(transaction_default_category):
+    assert transaction_default_category.category == ""
