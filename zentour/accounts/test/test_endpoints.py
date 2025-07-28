@@ -3,7 +3,8 @@ import uuid
 
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.core.files.uploadedfile import SimpleUploadedFile
+from django.contrib.messages import get_messages
+from django.conf import settings
 
 
 @pytest.mark.django_db
@@ -139,3 +140,71 @@ def test_edit_user_profile_get(client, user):
     assert response.status_code == 200
     assert "form" in response.context
     assert b"edit" in response.content.lower()
+
+
+@pytest.mark.django_db
+def test_transactions_view_unauthenticated(client):
+    url = reverse("accounts:transactions")
+
+    response = client.get(url)
+
+    assert response.status_code == 302
+    assert response.url.startswith(reverse("accounts:login"))
+
+
+@pytest.mark.django_db
+def test_transactions_view_authenticated(client, user):
+    client.login(username=user.username, password="password_test_user")
+    url = reverse("accounts:transactions")
+
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert b"transactions" in response.content.lower()
+
+
+@pytest.mark.django_db
+def test_superuser_view_unauthenticated(client):
+    url = reverse("accounts:superuser_view")
+
+    response = client.get(url)
+
+    assert response.status_code == 302
+    assert reverse("accounts:login") in response.url
+
+
+@pytest.mark.django_db
+def test_superuser_view_regular_user(client, user):
+    client.login(username=user.username, password="password_test_user")
+    url = reverse("accounts:superuser_view")
+
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert b"superuser" in response.content.lower()
+    assert str(settings.SUPER_USER_PAYMENT).encode() in response.content
+
+
+@pytest.mark.django_db
+def test_superuser_view_superuser_redirects(client, super_user):
+    client.login(username=super_user.username, password="Adminpasword123")
+
+    url = reverse("accounts:superuser_view")
+    response = client.get(url)
+
+    assert response.status_code == 302
+    assert response.url == reverse("accounts:profile")
+
+
+@pytest.mark.django_db
+def test_become_superuser_already_superuser(client, super_user):
+    client.login(username=super_user.username, password="Adminpasword123")
+    url = reverse("accounts:become_superuser")
+
+    response = client.get(url)
+
+    assert response.status_code == 302
+    assert response.url == reverse("accounts:profile")
+
+    messages = [m.message for m in get_messages(response.wsgi_request)]
+    assert "You are already super user" in messages
