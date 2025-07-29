@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.contrib.messages import get_messages
 from django.conf import settings
 
+from .fixtures import test_image_file
+
 
 @pytest.mark.django_db
 def test_register_view_creates_user_and_redirects(client):
@@ -127,6 +129,34 @@ def test_edit_user_profile_post_email_update(client, user):
     assert response.status_code == 302
     assert response.url == reverse("accounts:profile")
     assert user.email == new_email
+
+
+@pytest.mark.django_db
+def test_edit_user_profile_post_avatar_update(client, user, test_image_file):
+    client.login(username=user.username, password="password_test_user")
+    url = reverse("accounts:edit_profile")
+
+    new_email = "avatar_test@example.com"
+    form_data = {
+        "email": new_email,
+        "avatar": test_image_file,
+    }
+
+    response = client.post(url, data=form_data, format="multipart")
+
+    user.refresh_from_db()
+
+    profile = user.profile
+
+    assert response.status_code == 302
+    assert response.url == reverse("accounts:profile")
+
+    assert user.email == new_email
+
+    assert profile.avatar
+    assert "avatar" in profile.avatar.name
+    assert profile.avatar.name.startswith("avatars/")
+    assert profile.avatar.name.endswith(".jpg")
 
 
 @pytest.mark.django_db
