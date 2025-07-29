@@ -189,3 +189,42 @@ def test_order_two_items_total_model(user, tour, tour_with_discount):
     assert order_item2.item_total == tour_with_discount.discount_price
     assert order_item1.item_total == tour.price
     assert order.total == sum(order_item.item_total for order_item in order.items.all())
+
+
+@pytest.mark.django_db
+def test_review_creation_model(tour, user):
+    review = Review.objects.create(
+        user=user,
+        tour=tour,
+        comment='Test comment',
+        rating=4.5
+    )
+
+    assert review == Review.objects.get(id=1)
+    assert review in tour.reviews.all()
+    assert tour.rating == 4.5
+
+
+@pytest.mark.django_db
+def test_two_review_tour_rating_model(tour, user):
+    user2 = User.objects.create(
+        username='Username',
+        password='Password'
+    )
+
+    review = Review.objects.create(
+        user=user,
+        tour=tour,
+        comment='Test comment',
+        rating=4.5
+    )
+
+    review2 = Review.objects.create(
+        user=user2,
+        tour=tour,
+        comment='Test comment',
+        rating=2.0
+    )
+
+    assert tour.rating == 3.2
+    assert review, review2 in tour.reviews.all()
