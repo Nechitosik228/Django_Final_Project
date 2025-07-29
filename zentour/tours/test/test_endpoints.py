@@ -72,3 +72,18 @@ def test_create_tour_endpoint_not_authorized(client):
 #     response = client.get(url)
 
 #     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_cart_not_authorized(client):
+    url = reverse('tours:cart_detail')
+
+    response = client.get(url)
+
+    url = reverse('accounts:login')
+    url_with_query = f"{url}?next=/tours/cart/"
+
+    assert response.status_code == 302
+    assert response.url == url_with_query
+
+    
