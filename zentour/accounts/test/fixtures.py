@@ -1,4 +1,7 @@
+import io
 import pytest
+from PIL import Image
+from django.core.files.uploadedfile import SimpleUploadedFile
 from accounts.models import Balance, Transaction, Profile
 
 
@@ -53,3 +56,12 @@ def transaction_default_category(balance):
         status=Transaction.Choices.NEW,
         money_amount=100,
     )
+
+
+@pytest.fixture
+def test_image_file():
+    image = Image.new("RGB", (100, 100), color="red")
+    byte_io = io.BytesIO()
+    image.save(byte_io, "JPEG")
+    byte_io.seek(0)
+    return SimpleUploadedFile("avatar.jpg", byte_io.read(), content_type="image/jpeg")
