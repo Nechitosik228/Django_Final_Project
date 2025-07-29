@@ -8,7 +8,6 @@ from django.conf import settings
 
 
 @pytest.mark.django_db
-@pytest.mark.django_db
 def test_register_view_creates_user_and_redirects(client):
     url = reverse("accounts:register")
 
