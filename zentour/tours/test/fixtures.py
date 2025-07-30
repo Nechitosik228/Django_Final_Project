@@ -12,7 +12,8 @@ def tour(user):
         end_date='2025-02-01',
         price=50,
         tickets_amount=20,
-        cities='Berlin'
+        cities='Berlin',
+        image='avatars/logo.png'
     )
 
 

@@ -60,7 +60,7 @@ def create_tour(request):
                 tour.image = image
                 tour.save()
                 messages.success(request, "You have created your Tour")
-                return redirect("tours:home")
+                return redirect("tours:tour_detail", tour_id=tour.id)
 
         return render(request, "tours/create_tour.html", {"form": form})
     else:
@@ -160,7 +160,7 @@ def cart_detail(request):
 def cart_delete(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
     cart = request.user.cart
-    cart_item = CartItem.objects.get(cart=cart, tour=tour)
+    cart_item = get_object_or_404(CartItem, cart=cart, tour=tour)
     cart_item.amount -= 1
     if cart_item.amount == 0:
         cart_item.delete()
