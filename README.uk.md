@@ -75,7 +75,7 @@
     ```
 ## Додатково
 
-![Schema](images/zentour.drawio.png)
+![Schema](zentour/images/zentour.drawio.png)
 
 ---
 # Переклад [Англійською](README.md)
