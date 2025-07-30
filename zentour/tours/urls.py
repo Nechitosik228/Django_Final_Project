@@ -12,7 +12,7 @@ from .views import (
     tour_editing,
     delete_tour,
     delete_review,
-    users_bought_tours
+    users_bought_tours,
 )
 
 
@@ -31,5 +31,5 @@ urlpatterns = [
     path("edit/<int:tour_id>/", tour_editing, name="tour_edit"),
     path("delete/<int:tour_id>/", delete_tour, name="delete_tour"),
     path("delete_review/<int:review_id>/", delete_review, name="delete_review"),
-    path("bought_tours/", users_bought_tours, name='users_bought_tours')
+    path("bought_tours/", users_bought_tours, name="users_bought_tours"),
 ]
