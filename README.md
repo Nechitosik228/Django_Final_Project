@@ -82,5 +82,3 @@ To get started with **Zentour**, follow these steps:
 
 ---
 # Translation to [Ukrainian](README.uk.md)
-
-# The documentation is under development, so it may not be clear or work correctly :warning: :warning: :warning:
