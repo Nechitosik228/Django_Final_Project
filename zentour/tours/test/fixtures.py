@@ -63,3 +63,13 @@ def cart_item_with_discount(user, tour_with_discount):
         tour=tour_with_discount,
         amount=3
     )
+
+
+@pytest.fixture
+def review(user, tour):
+    return Review.objects.create(
+        user=user,
+        tour=tour,
+        comment='Test comment',
+        rating=4.6
+    )

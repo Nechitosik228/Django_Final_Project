@@ -1,19 +1,16 @@
 import pytest
-import datetime
 
-from django.contrib.auth.models import User
 from django.urls import reverse
 from django.contrib.messages import get_messages
-from django.utils.http import urlencode
 
-from accounts.models import Profile
-from tours.models import Cart, Tour, Review, CartItem, Order, OrderItem
+from tours.models import Tour, Review, CartItem
 from .fixtures import (
     tour,
     tour_with_discount,
     tour_with_no_tickets,
     cart_item,
     cart_item_with_discount,
+    review,
 )
 
 
@@ -415,5 +412,119 @@ def test_tour_editing(client, user, tour):
     assert response.status_code == 302
     assert response.url == reverse("tours:tour_detail", args=[tour.id])
     assert "Tour updated successfully." in [
+        m.message for m in get_messages(response.wsgi_request)
+    ]
+    assert Tour.objects.get(id=tour.id).name == "Testname"
+
+
+@pytest.mark.django_db
+def test_tour_deleting_not_authorized(client, tour):
+    url = reverse("tours:delete_tour", args=[tour.id])
+
+    response = client.post(url)
+
+    url_login = reverse("accounts:login")
+    url_with_query = f"{url_login}?next=/tours/delete/1/"
+
+    assert response.status_code == 302
+    assert response.url == url_with_query
+
+
+@pytest.mark.django_db
+def test_tour_deleting_not_author(client, super_user, tour):
+    client.login(username=super_user.username, password="Adminpasword123")
+
+    url = reverse("tours:delete_tour", args=[tour.id])
+
+    response = client.post(url)
+
+    assert response.status_code == 302
+    assert response.url == reverse("tours:tour_detail", args=[tour.id])
+    assert "You are not the creator of this tour!" in [
+        m.message for m in get_messages(response.wsgi_request)
+    ]
+
+
+@pytest.mark.django_db
+def test_tour_deleting_get(client, user, tour):
+    client.login(username=user.username, password="password_test_user")
+
+    url = reverse("tours:delete_tour", args=[tour.id])
+
+    response = client.get(url)
+
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_tour_deleting_post(client, user, tour):
+    client.login(username=user.username, password="password_test_user")
+
+    url = reverse("tours:delete_tour", args=[tour.id])
+
+    data = {"answer": "Yes"}
+
+    response = client.post(url, data=data)
+
+    assert response.status_code == 302
+    assert response.url == reverse("tours:home")
+    assert "You deleted your tour" in [
+        m.message for m in get_messages(response.wsgi_request)
+    ]
+
+
+@pytest.mark.django_db
+def test_review_deleting_not_authorized(client, review):
+    url = reverse("tours:delete_review", args=[review.id])
+
+    response = client.get(url)
+
+    url_login = reverse("accounts:login")
+    url_with_query = f"{url_login}?next=/tours/delete_review/1/"
+
+    assert response.status_code == 302
+    assert response.url == url_with_query
+
+
+@pytest.mark.django_db
+def test_review_deleting_not_author(client, super_user, review):
+    client.login(username=super_user.username, password="Adminpasword123")
+
+    url = reverse("tours:delete_review", args=[review.id])
+
+    response = client.get(url)
+
+    assert response.status_code == 302
+    assert response.url == reverse("tours:tour_detail", args=[review.tour.id])
+    assert "You are not the creator of this review!" in [
+        m.message for m in get_messages(response.wsgi_request)
+    ]
+
+
+@pytest.mark.django_db
+def test_review_deleting_get(client, user, review):
+    client.login(username=user.username, password="password_test_user")
+
+    url = reverse("tours:delete_review", args=[review.id])
+
+    response = client.get(url)
+
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_review_deleting_post(client, user, review):
+    client.login(username=user.username, password="password_test_user")
+
+    url = reverse("tours:delete_review", args=[review.id])
+
+    data = {
+        'answer':'Yes'
+    }
+    response = client.post(url, data=data)
+
+    assert response.status_code == 302
+    assert response.url == reverse("tours:tour_detail", args=[review.tour.id])
+    assert "You deleted your review" in [
         m.message for m in get_messages(response.wsgi_request)
     ]
