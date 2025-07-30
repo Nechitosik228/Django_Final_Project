@@ -62,11 +62,11 @@
     ```
 4. **Встановіть необхідні залежності:**
     ```bash
+    cd zentour
     pip install -r requirements.txt 
     ```
 5. **Виконати міграцію бази даних:**
     ```bash
-    cd zentour
     python manage.py migrate
     ```
 6. **Запустіть сервер:**
