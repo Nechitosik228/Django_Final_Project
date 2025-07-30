@@ -48,12 +48,13 @@ class Tour(models.Model):
         db_table = "tours"
 
     def clean(self):
-        if self.end_date <= self.start_date:
-            raise ValidationError(
-                {"end_date": "End date should be after the start date"}
-            )
-        if self.start_date < datetime.date.today():
-            raise ValidationError({"start_date": "Start date cannot be in past"})
+        if self.start_date and self.end_date:
+            if self.end_date <= self.start_date:
+                raise ValidationError(
+                    {"end_date": "End date should be after the start date"}
+                )
+            if self.start_date < datetime.date.today():
+                raise ValidationError({"start_date": "Start date cannot be in past"})
 
     def __str__(self):
         return self.name
