@@ -33,8 +33,8 @@ def test_create_tour_endpoint_not_authorized(client):
 
     response = client.post(url, data=form_data)
 
-    url = reverse('accounts:login')
-    url_with_query = f"{url}?next=/tours/create-tour/"
+    url_login = reverse('accounts:login')
+    url_with_query = f"{url_login}?next=/tours/create-tour/"
 
     assert response.status_code == 302
     assert response.url == url_with_query
@@ -80,10 +80,36 @@ def test_cart_not_authorized(client):
 
     response = client.get(url)
 
-    url = reverse('accounts:login')
-    url_with_query = f"{url}?next=/tours/cart/"
+    url_login = reverse('accounts:login')
+    url_with_query = f"{url_login}?next=/tours/cart/"
 
     assert response.status_code == 302
     assert response.url == url_with_query
 
+
+@pytest.mark.django_db
+def test_cart_add_not_found(client, tour):
+    url = 'tours/cart-add/1345'
+
+    response = client.get(url)
+
+    assert response.status_code == 404
+
+
+# @pytest.mark.django_db
+# def test_cart_add_not_authorized(client):
+#     url = '/tours/cart-add/1'
+
+#     response = client.post(url)
+
+#     assert response.status_code == 301
+
+
+@pytest.mark.django_db
+def test_cart_delete_not_found(client, tour):
+    url = 'tours/cart-delete/1345'
+
+    response = client.get(url)
+
+    assert response.status_code == 404
     
