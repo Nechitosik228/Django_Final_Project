@@ -131,20 +131,20 @@ def test_edit_tour_form_valid_data(tour, test_image_file):
     assert str(updated_tour.end_date) == future_end_date_str
 
 
-# @pytest.mark.django_db
-# def test_tour_form_invalid_date_format(test_image_file):
-#     form_data = {
-#         "name": "Date Format Tour",
-#         "description": "desc",
-#         "price": 50,
-#         "discount": 5,
-#         "tickets_amount": 5,
-#         "cities": "Berlin",
-#         "start_date": "01/01/2026",
-#         "end_date": "02/01/2026",
-#     }
-#     files = {"image": test_image_file}
-#     form = TourForm(data=form_data, files=files)
-#     assert not form.is_valid()
-#     assert "start_date" in form.errors
-#     assert "end_date" in form.errors
+@pytest.mark.django_db
+def test_tour_form_invalid_date_format(test_image_file):
+    form_data = {
+        "name": "Date Format Tour",
+        "description": "desc",
+        "price": 50,
+        "discount": 5,
+        "tickets_amount": 5,
+        "cities": "Berlin",
+        "start_date": "01/01/2026",
+        "end_date": "02/01/2026",
+    }
+    files = {"image": test_image_file}
+    form = TourForm(data=form_data, files=files)
+    assert not form.is_valid()
+    assert "start_date" in form.errors
+    assert "end_date" in form.errors
