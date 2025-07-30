@@ -45,6 +45,7 @@ class OrderForm(forms.ModelForm):
 
 class ReviewForm(forms.ModelForm):
     comment = forms.CharField(
+        max_length=300,
         widget=forms.Textarea(
             attrs={"rows": 4, "placeholder": "Leave your feedback here..."}
         ),
