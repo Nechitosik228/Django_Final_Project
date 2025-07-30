@@ -1,5 +1,6 @@
 import pytest
 
+from datetime import date, timedelta
 from django.core.exceptions import ValidationError
 
 from accounts.test.fixtures import test_image_file
@@ -89,8 +90,42 @@ def test_review_form_non_numeric_rating():
 
 @pytest.mark.django_db
 def test_review_form_comment_too_long(user, tour):
-    long_comment = "x" * 301  
+    long_comment = "x" * 301
     form = ReviewForm(data={"comment": long_comment, "rating": 3})
     assert not form.is_valid()
     assert "comment" in form.errors
     assert any("at most 300 characters" in msg for msg in form.errors["comment"])
+
+
+@pytest.mark.django_db
+def test_edit_tour_form_valid_data(tour, test_image_file):
+    future_date = date.today() + timedelta(days=10)
+    future_date_str = future_date.strftime("%Y-%m-%d")
+
+    future_end_date = future_date + timedelta(days=30)
+    future_end_date_str = future_end_date.strftime("%Y-%m-%d")
+
+    form_data = {
+        "name": "Updated Tour Name",
+        "description": "Updated description",
+        "start_date": future_date_str,
+        "end_date": future_end_date_str,
+        "price": 200,
+        "discount": 5,
+        "tickets_amount": 15,
+        "cities": "Paris, Rome",
+    }
+    files = {"image": test_image_file}
+
+    form = EditTourForm(data=form_data, files=files, instance=tour)
+    if not form.is_valid():
+        print(form.errors)
+
+    assert form.is_valid()
+
+    updated_tour = form.save()
+
+    assert updated_tour.name == "Updated Tour Name"
+    assert updated_tour.description == "Updated description"
+    assert str(updated_tour.start_date) == future_date_str
+    assert str(updated_tour.end_date) == future_end_date_str
