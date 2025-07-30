@@ -64,11 +64,11 @@ To get started with **Zentour**, follow these steps:
     ```
 4. **Install the required dependencies:**
     ```bash
+    cd zentour
     pip install -r requirements.txt 
     ```
 5. **Run database migrations:**
     ```bash
-    cd zentour
     python manage.py migrate
     ```
 6. **Run the development server:**
