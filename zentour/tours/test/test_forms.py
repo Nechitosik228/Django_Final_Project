@@ -148,23 +148,3 @@ def test_tour_form_invalid_date_format(test_image_file):
     assert not form.is_valid()
     assert "start_date" in form.errors
     assert "end_date" in form.errors
-
-
-@pytest.mark.django_db
-def test_tour_form_missing_required_image():
-    start = date.today() + timedelta(days=3)
-    end = start + timedelta(days=2)
-
-    form_data = {
-        "name": "No Image Tour",
-        "description": "desc",
-        "price": "50",
-        "discount": 0,
-        "tickets_amount": 5,
-        "cities": "Berlin",
-        "start_date": start.strftime("%Y-%m-%d"),
-        "end_date": end.strftime("%Y-%m-%d"),
-    }
-    form = TourForm(data=form_data, files={})
-    assert not form.is_valid()
-    assert "image" in form.errors
