@@ -1,6 +1,6 @@
 # Zentour
 
-![Logo](images/logo.jpg)
+![Logo](zentour/images/logo.jpg)
 
 ## About
 **Zentour** is a web application for booking tours, created as a convenient tool for tourists and tour operators.

@@ -1,6 +1,6 @@
 # Zentour
 
-![Logo](images/logo.jpg)
+![Logo](zentour/images/logo.jpg)
 
 ## Опис
 **Zentour** – це веб-додаток для бронювання турів, створений як зручний інструмент для туристів і туроператорів.  
