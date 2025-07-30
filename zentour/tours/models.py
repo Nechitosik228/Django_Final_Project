@@ -53,6 +53,8 @@ class Tour(models.Model):
                 raise ValidationError({'end_date':'End date should be after the start date'})
             if self.start_date < datetime.date.today():
                 raise ValidationError({'start_date':'Start date cannot be in past'})
+        if self.discount > 100:
+            raise ValidationError({'discount':'Discount cannot be higher than 100%'})
 
     def __str__(self):
         return self.name

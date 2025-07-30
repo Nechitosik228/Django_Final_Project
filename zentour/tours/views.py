@@ -60,7 +60,7 @@ def create_tour(request):
                 tour.image = image
                 tour.save()
                 messages.success(request, "You have created your Tour")
-                return redirect("tours:home")
+                return redirect("tours:tour_detail", tour_id=tour.id)
 
         return render(request, "tours/create_tour.html", {"form": form})
     else:
@@ -92,6 +92,7 @@ def tour_detail(request, tour_id):
         },
     )
 
+
 @login_required
 def tour_editing(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
@@ -116,33 +117,45 @@ def delete_tour(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
 
     if request.user != tour.user:
-        messages.error(request, 'You are not the creator of this tour!')
-        return redirect('tours:tour_detail', tour_id=tour_id)
-    
-    if request.method == 'GET':
-        return render(request, 'tours/delete_tour.html', {'tour':tour})
+        messages.error(request, "You are not the creator of this tour!")
+        return redirect("tours:tour_detail", tour_id=tour_id)
+
+    if request.method == "GET":
+        return render(request, "tours/delete_tour.html", {"tour": tour})
     else:
-        if request.POST.get('answer') == 'Yes':
+        if request.POST.get("answer") == "Yes":
             bought_tours = BoughtTour.objects.filter(tour=tour).all()
             if bought_tours:
                 for bought_tour in bought_tours:
                     bought_tour.user.profile.balance.amount += bought_tour.price
                     bought_tour.user.profile.balance.save()
-                    create_transaction(bought_tour.user.profile.balance, 1, bought_tour.price, f'Tour {tour} tickets return', 4)
+                    create_transaction(
+                        bought_tour.user.profile.balance,
+                        1,
+                        bought_tour.price,
+                        f"Tour {tour} tickets return",
+                        4,
+                    )
                     request.user.profile.balance.amount -= bought_tour.price
                     request.user.profile.balance.save()
-                    create_transaction(request.user.profile.balance, 2, bought_tour.price, f'Tour {tour} tickets return', 4)
+                    create_transaction(
+                        request.user.profile.balance,
+                        2,
+                        bought_tour.price,
+                        f"Tour {tour} tickets return",
+                        4,
+                    )
             tour.delete()
-            messages.success(request, 'You deleted your tour')
-            return redirect('tours:home')
+            messages.success(request, "You deleted your tour")
+            return redirect("tours:home")
         else:
-            return redirect('tours:tour_detail', tour_id=tour_id)
+            return redirect("tours:tour_detail", tour_id=tour_id)
 
 
 @login_required
 def users_bought_tours(request):
     bought_tours = request.user.bought_tours.all()
-    return render(request, 'tours/users_tours.html', {'bought_tours':bought_tours})
+    return render(request, "tours/users_tours.html", {"bought_tours": bought_tours})
 
 
 @login_required
@@ -160,7 +173,7 @@ def cart_detail(request):
 def cart_delete(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
     cart = request.user.cart
-    cart_item = CartItem.objects.get(cart=cart, tour=tour)
+    cart_item = get_object_or_404(CartItem, cart=cart, tour=tour)
     cart_item.amount -= 1
     if cart_item.amount == 0:
         cart_item.delete()
@@ -179,23 +192,29 @@ def cart_add(request, tour_id):
             cart_item.amount = 1
         else:
             cart_item.delete()
-            messages.warning(request, f'Tickets left for {tour}: {tour.tickets_amount}. You cannot buy this tour!')
-            return redirect('tours:tour_detail', tour_id=tour.id)
+            messages.warning(
+                request,
+                f"Tickets left for {tour}: {tour.tickets_amount}. You cannot buy this tour!",
+            )
+            return redirect("tours:tour_detail", tour_id=tour.id)
     else:
         cart_item.amount += 1
         if tour.tickets_amount < cart_item.amount:
-            messages.warning(request, f'Tickets left for {tour}: {tour.tickets_amount}. You cannot add another ticket!')
-            return redirect('tours:cart_detail')
+            messages.warning(
+                request,
+                f"Tickets left for {tour}: {tour.tickets_amount}. You cannot add another ticket!",
+            )
+            return redirect("tours:cart_detail")
         else:
             cart_item.save()
-        
+
     cart_item.save()
     return redirect("tours:cart_detail")
 
 
 @login_required
 def checkout(request):
-    if not getattr(request.user, "cart", None):
+    if not request.user.cart.items.all():
         messages.error(request, "Your cart is empty")
         return redirect("tours:cart_detail")
     if request.method == "GET":
@@ -226,12 +245,24 @@ def checkout(request):
                 balance.amount -= order.total
                 balance.save()
                 for order_item in order_items:
-                    create_transaction(balance, 2, order_item.item_total, f'Tour {order_item.tour} purchase', status=4)
+                    create_transaction(
+                        balance,
+                        2,
+                        order_item.item_total,
+                        f"Tour {order_item.tour} purchase",
+                        status=4,
+                    )
                     order_item.tour.tickets_amount -= order_item.amount
                     order_item.tour.save()
                     order_item.tour.user.profile.balance.amount += order_item.item_total
                     order_item.tour.user.profile.balance.save()
-                    create_transaction(order_item.tour.user.profile.balance, 1, order_item.item_total, f'Profit from Tour {order_item.tour}', status=4)
+                    create_transaction(
+                        order_item.tour.user.profile.balance,
+                        1,
+                        order_item.item_total,
+                        f"Profit from Tour {order_item.tour}",
+                        status=4,
+                    )
                     bought_tour, create = BoughtTour.objects.get_or_create(
                         user=request.user,
                         tour=order_item.tour,
@@ -250,7 +281,7 @@ def checkout(request):
             else:
                 order.status = 5
                 order.save()
-                create_transaction(balance, 2, order.total, 'Tour purchase', status=5)
+                create_transaction(balance, 2, order.total, "Tour purchase", status=5)
                 messages.error(request, "You don't have enough money on you balance")
                 return redirect("accounts:profile")
             messages.success(request, "You have completed your order")
@@ -293,15 +324,15 @@ def delete_review(request, review_id):
     review = get_object_or_404(Review, id=review_id)
 
     if request.user != review.user:
-        messages.error(request, 'You are not the creator of this review!')
-        return redirect('tours:tour_detail', tour_id=review.tour.id)
-    
-    if request.method == 'GET':
-        return render(request, 'tours/delete_review.html')
+        messages.error(request, "You are not the creator of this review!")
+        return redirect("tours:tour_detail", tour_id=review.tour.id)
+
+    if request.method == "GET":
+        return render(request, "tours/delete_review.html")
     else:
-        if request.POST.get('answer') == 'Yes':
+        if request.POST.get("answer") == "Yes":
             review.delete()
-            messages.success(request, 'You deleted your review')
-            return redirect('tours:tour_detail', tour_id=review.tour.id)
+            messages.success(request, "You deleted your review")
+            return redirect("tours:tour_detail", tour_id=review.tour.id)
         else:
-            return redirect('tours:tour_detail', tour_id=review.tour.id)
+            return redirect("tours:tour_detail", tour_id=review.tour.id)

@@ -13,7 +13,7 @@ class TourForm(forms.ModelForm):
         widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
     )
 
-    image = forms.ImageField(required=True, label="Upload an image:")
+    image = forms.ImageField(required=False, label="Upload an image:")
 
     class Meta:
         model = Tour
