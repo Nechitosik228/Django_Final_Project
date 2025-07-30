@@ -78,7 +78,7 @@ To get started with **Zentour**, follow these steps:
 
 ## Reports
 
-![Schema](images/zentour.drawio.png)
+![Schema](zentour/images/zentour.drawio.png)
 
 ---
 # Translation to [Ukrainian](README.uk.md)
