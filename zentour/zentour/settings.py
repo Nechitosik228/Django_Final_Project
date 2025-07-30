@@ -127,6 +127,9 @@ AVATAR_ROOT = f'{BASE_DIR}/avatars'
 TOUR_IMAGE_URL = 'tour_images/'
 TOUR_IMAGE_ROOT = f'{BASE_DIR}/tour_images'
 
+IMAGE_URL = 'images/'
+IMAGE_ROOT = f'{BASE_DIR}/images'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
