@@ -17,7 +17,7 @@ class TourForm(forms.ModelForm):
 
     class Meta:
         model = Tour
-        extra_fields = [ "image"]
+        extra_fields = ["image"]
         fields = [
             "name",
             "description",
@@ -25,7 +25,7 @@ class TourForm(forms.ModelForm):
             "discount",
             "tickets_amount",
             "cities",
-            "start_date", 
+            "start_date",
             "end_date",
         ]
 
@@ -45,6 +45,7 @@ class OrderForm(forms.ModelForm):
 
 class ReviewForm(forms.ModelForm):
     comment = forms.CharField(
+        max_length=300,
         widget=forms.Textarea(
             attrs={"rows": 4, "placeholder": "Leave your feedback here..."}
         ),

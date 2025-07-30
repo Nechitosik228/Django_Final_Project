@@ -140,4 +140,6 @@ class OrderItem(models.Model):
         return self.tour.discount_price * self.amount
 
     def __str__(self):
-        return f"{self.order.id} : {self.tour.name} : {self.amount} : ${self.item_total}"
+        return (
+            f"{self.order.id} : {self.tour.name} : {self.amount} : ${self.item_total}"
+        )

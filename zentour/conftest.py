@@ -7,6 +7,7 @@ django.setup()
 
 from django.contrib.auth.models import User
 
+
 @pytest.fixture
 def user():
     return User.objects.create_user(
@@ -17,7 +18,5 @@ def user():
 @pytest.fixture
 def super_user():
     return User.objects.create_superuser(
-        username='Admin', 
-        password='Adminpasword123', 
-        email='admin@gmail.com'
+        username="Admin", password="Adminpasword123", email="admin@gmail.com"
     )
