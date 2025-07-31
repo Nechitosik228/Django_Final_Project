@@ -1,11 +1,9 @@
 import pytest
 
 from datetime import date, timedelta
-from django.core.exceptions import ValidationError
 
 from accounts.test.fixtures import test_image_file
 from tours.forms import TourForm, OrderForm, ReviewForm, EditTourForm
-from tours.models import Tour, Order
 from .fixtures import tour
 
 
