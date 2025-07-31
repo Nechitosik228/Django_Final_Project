@@ -71,7 +71,14 @@ To get started with **Zentour**, follow these steps:
     ```bash
     python manage.py migrate
     ```
-6. **Run the development server:**
+6. **Insert env variables:**
+    ```
+    erase .example from the .env.example file
+    insert your SECRET_KEY
+    insert your EMAIL_HOST_USER
+    insert your EMAIL_HOST_PASSWORD
+    ```
+7. **Run the development server:**
     ```bash
     python manage.py runserver
     ```
