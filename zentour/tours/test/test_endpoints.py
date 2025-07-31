@@ -4,14 +4,7 @@ from django.urls import reverse
 from django.contrib.messages import get_messages
 
 from tours.models import Tour, Review, CartItem
-from .fixtures import (
-    tour,
-    tour_with_discount,
-    tour_with_no_tickets,
-    cart_item,
-    cart_item_with_discount,
-    review,
-)
+from .fixtures import tour, review
 
 
 @pytest.mark.django_db

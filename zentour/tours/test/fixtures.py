@@ -1,6 +1,6 @@
 import pytest
 
-from tours.models import Tour, Review, Cart, CartItem, Order, OrderItem
+from tours.models import Tour, Review, CartItem
 
 
 @pytest.fixture
@@ -13,8 +13,8 @@ def tour(user):
         end_date="2025-02-01",
         price=50,
         tickets_amount=20,
-        cities='Berlin',
-        image='avatars/logo.png'
+        cities="Berlin",
+        image="avatars/logo.png",
     )
 
 
@@ -55,18 +55,11 @@ def cart_item(user, tour):
 
 @pytest.fixture
 def cart_item_with_discount(user, tour_with_discount):
-    return CartItem.objects.create(
-        cart=user.cart,
-        tour=tour_with_discount,
-        amount=3
-    )
+    return CartItem.objects.create(cart=user.cart, tour=tour_with_discount, amount=3)
 
 
 @pytest.fixture
 def review(user, tour):
     return Review.objects.create(
-        user=user,
-        tour=tour,
-        comment='Test comment',
-        rating=4.6
+        user=user, tour=tour, comment="Test comment", rating=4.6
     )

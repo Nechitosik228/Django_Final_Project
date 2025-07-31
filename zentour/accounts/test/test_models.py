@@ -81,8 +81,6 @@ def test_balance_str(user):
 
 @pytest.mark.django_db
 def test_balance_updated_after_transaction(balance, completed_transaction):
-    
-
     balance.amount += completed_transaction.money_amount
     balance.save()
 
