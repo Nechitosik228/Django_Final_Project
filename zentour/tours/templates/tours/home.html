@@ -53,7 +53,18 @@
                                 {% endfor %}
                             </div>
 
-                            <span class="text-warning">Price: ${{ tour.discount_price }}</span>
+                            {% if tour.discount %}
+                                <span class="text-warning">
+                                    ${{ tour.discount_price }}
+                                </span>
+                                <span class="text-decoration-line-through">
+                                    ${{ tour.price }}
+                                </span>
+                            {% else %}
+                                <span class="text-warning">
+                                    ${{ tour.price }}
+                                </span>   
+                            {% endif %}
                             <a href="{% url 'tours:tour_detail' tour.id %}" class="btn btn-primary">Read more!</a>
                         </div>
                     </div>

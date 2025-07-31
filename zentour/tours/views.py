@@ -15,6 +15,10 @@ def home(request):
     max_price = request.GET.get("max_price")
     start_date = request.GET.get("start_date")
     end_date = request.GET.get("end_date")
+    search = request.GET.get("search")
+
+    if search:
+        tours = tours.filter(name__icontains=search)
 
     if min_price:
         tours = tours.filter(price__gte=min_price)
