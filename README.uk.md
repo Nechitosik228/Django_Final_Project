@@ -74,6 +74,16 @@
     python manage.py runserver
     ```
 
+## Запуск докеру
+1. **Create image:**
+    ```bash
+    docker build -t your_app_name .
+    ```
+2. **Run**
+    ```bash
+    docker run -p 8080:8080 zentour
+    ```
+
 ## Структура Проекту
 ```
 Django_Final_Project

@@ -76,6 +76,16 @@ To get started with **Zentour**, follow these steps:
     python manage.py runserver
     ```
 
+## Run Docker
+1. **Create image:**
+    ```bash
+    docker build -t your_app_name .
+    ```
+2. **Run**
+    ```bash
+    docker run -p 8080:8080 zentour
+    ```
+
 ## Project structure
 ```
 Django_Final_Project
