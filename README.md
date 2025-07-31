@@ -76,13 +76,7 @@ To get started with **Zentour**, follow these steps:
     python manage.py runserver
     ```
 
-## Reports
-
-![Schema](zentour/images/zentour.drawio.png)
-
----
-# Translation to [Ukrainian](README.uk.md)
-
+## Project structure
 ```
 Django_Final_Project
 ├─ LICENSE
@@ -197,5 +191,11 @@ Django_Final_Project
       ├─ urls.py
       ├─ wsgi.py
       └─ __init__.py
-
 ```
+## Reports
+
+![Schema](zentour/images/zentour.drawio.png)
+
+---
+# Translation to [Ukrainian](README.uk.md)
+
