@@ -293,6 +293,10 @@ def checkout(request):
 def submit_review(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
 
+    if request.user == tour.user:
+        messages.error(request, 'You cannot leave a review to your own tour')
+        return redirect('tours:tour_detail', tour_id=tour.id)
+
     try:
         review = tour.reviews.get(user=request.user)
         is_edit = True

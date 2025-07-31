@@ -55,6 +55,8 @@ class Tour(models.Model):
                 raise ValidationError({'start_date':'Start date cannot be in past'})
         if self.discount > 100:
             raise ValidationError({'discount':'Discount cannot be higher than 100%'})
+        if self.price <= 0:
+            raise ValidationError({'price':'Price should be higher than 0'})
 
     def __str__(self):
         return self.name
