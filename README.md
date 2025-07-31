@@ -92,7 +92,6 @@ Django_Final_Project
 ├─ LICENSE
 ├─ README.md
 ├─ README.uk.md
-├─ tree.txt
 └─ zentour
    ├─ .dockerignore
    ├─ accounts
