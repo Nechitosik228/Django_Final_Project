@@ -133,39 +133,42 @@
         </div>
     </div>
     <div class="reviews">
-        <div class="card text-bg-info review-card" style="text-align: center;">
-            {% if request.user.is_authenticated %}
+        {% if request.user.is_authenticated %}
                 {% if request.user != tour.user %}
-                    <h2 class="card-header white">Leave a review</h2>
-                    <form method="POST" action="{% url 'tours:submit_review' tour.id %}">
-                        {% csrf_token %}
+                    <div class="card text-bg-info review-card" style="text-align: center;">
+                        <h2 class="card-header white">Leave a review</h2>
+                        <form method="POST" action="{% url 'tours:submit_review' tour.id %}">
+                            {% csrf_token %}
 
-                        {{ form.comment.label_tag }}
-                        {{ form.comment }}
+                            {{ form.comment.label_tag }}
+                            {{ form.comment }}
 
-                        <label for="star-rating">Rating (1–5):</label>
-                        <div id="star-rating">
-                            {% for i in "12345" %}
-                                <span class="fa fa-star star" data-value="{{ forloop.counter }}"></span>
-                            {% endfor %}
-                        </div>
+                            <label for="star-rating">Rating (1–5):</label>
+                            <div id="star-rating">
+                                {% for i in "12345" %}
+                                    <span class="fa fa-star star" data-value="{{ forloop.counter }}"></span>
+                                {% endfor %}
+                            </div>
 
-                        {% with form.rating as rating_field %}
-                            {{ rating_field }}
-                            <style>
-                                input[name="{{ rating_field.html_name }}"] {
-                                    display: none;
-                                }
-                            </style>
-                        {% endwith %}
+                            {% with form.rating as rating_field %}
+                                {{ rating_field }}
+                                <style>
+                                    input[name="{{ rating_field.html_name }}"] {
+                                        display: none;
+                                    }
+                                </style>
+                            {% endwith %}
 
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>   
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form> 
+                    </div>  
                 {% endif %}   
             {% else %}
-                <p><a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to leave a review.</p>
+            <div class="card text-bg-info review-card" style="text-align: center;">
+                <p class="card-body white"><a class="white" href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to leave a review.</p>
+            </div>
             {% endif %}
-        </div>       
+               
         <h2 class="white">Reviews:</h2>
         {% for review in tour.reviews.all %}
             <div class="card text-bg-info">
