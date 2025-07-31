@@ -69,7 +69,14 @@
     ```bash
     python manage.py migrate
     ```
-6. **Запустіть сервер:**
+6. **Вставте .env змінні:**
+    ```
+    стеріть .example з файлу .env.example
+    вставте свій SECRET_KEY
+    вставте свій EMAIL_HOST_USER
+    вставте свій EMAIL_HOST_PASSWORD
+    ```
+7. **Запустіть сервер:**
     ```bash
     python manage.py runserver
     ```
