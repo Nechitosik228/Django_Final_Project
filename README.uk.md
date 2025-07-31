@@ -81,7 +81,7 @@
     ```
 2. **Run**
     ```bash
-    docker run -p 8080:8080 zentour
+    docker run -p 8080:8080 your_app_name
     ```
 
 ## Структура Проекту
