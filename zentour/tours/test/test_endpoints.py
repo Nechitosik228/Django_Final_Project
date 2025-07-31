@@ -518,9 +518,7 @@ def test_review_deleting_post(client, user, review):
 
     url = reverse("tours:delete_review", args=[review.id])
 
-    data = {
-        'answer':'Yes'
-    }
+    data = {"answer": "Yes"}
     response = client.post(url, data=data)
 
     assert response.status_code == 302
