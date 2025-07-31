@@ -1,10 +1,9 @@
 import pytest
 
-from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 
 from accounts.models import Balance, Transaction, Profile
-from tours.models import Cart, Order, Review, BoughtTour
+from tours.models import Cart
 from .fixtures import (
     profile,
     balance,

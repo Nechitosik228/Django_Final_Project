@@ -2,7 +2,7 @@ import io
 import pytest
 from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
-from accounts.models import Balance, Transaction, Profile
+from accounts.models import Transaction
 
 
 @pytest.fixture

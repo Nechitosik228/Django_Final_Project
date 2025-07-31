@@ -1,7 +1,5 @@
 import pytest
 
-from django.core.exceptions import ValidationError
-
 from accounts.forms import RegisterForm, LoginForm, BalanceForm, ProfileUpdateForm
 from .fixtures import test_image_file
 
