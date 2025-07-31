@@ -77,11 +77,11 @@ To get started with **Zentour**, follow these steps:
     ```
 
 ## Run Docker
-1. **Create image:**
+1. **Створення image:**
     ```bash
     docker build -t your_app_name .
     ```
-2. **Run**
+2. **Запуск**
     ```bash
     docker run -p 8080:8080 your_app_name
     ```
