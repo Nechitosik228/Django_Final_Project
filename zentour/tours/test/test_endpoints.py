@@ -333,7 +333,7 @@ def test_checkout_post(client, super_user, tour):
 
     assert response.status_code == 302
     assert response.url == reverse("tours:home")
-    assert "You have completed your order" in [
+    assert 'You have completed your order. We have sent tickets to your email' in [
         m.message for m in get_messages(response.wsgi_request)
     ]
 
