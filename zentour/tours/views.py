@@ -6,7 +6,7 @@ from django.core.mail import EmailMessage
 
 from .models import Tour, CartItem, OrderItem, Review, BoughtTour
 from .forms import TourForm, ReviewForm, OrderForm, EditTourForm
-from .utils import calculate_star_ranges, create_transaction
+from .utils import calculate_star_ranges, create_transaction, send_email_with_attachment
 
 
 def home(request):
@@ -57,8 +57,6 @@ def create_tour(request):
                 start_date = form.cleaned_data.get("start_date")
                 end_date = form.cleaned_data.get("end_date")
                 image = form.cleaned_data.get("image")
-                print(form.cleaned_data)
-                print(image)
                 tour = form.save(commit=False)
                 tour.user = request.user
                 tour.start_date = start_date
@@ -258,8 +256,6 @@ def checkout(request):
                         f"Tour {order_item.tour} purchase",
                         status=4,
                     )
-                    email = EmailMessage(subject='Hello!', body='This email has an attachment.', from_email=settings.EMAIL_HOST_USER, to=[order_item.tour.user.email])
-                    email.send()
                     order_item.tour.tickets_amount -= order_item.amount
                     order_item.tour.save()
                     order_item.tour.user.profile.balance.amount += order_item.item_total
@@ -283,6 +279,7 @@ def checkout(request):
                         bought_tour.amount += order_item.amount
                         bought_tour.price += order_item.item_total
                         bought_tour.save()
+                    send_email_with_attachment('Tickets', f'Hello! Here is/are your {order_item.amount} ticket/s for {order_item.tour} in a PDF file:', settings.EMAIL_HOST_USER, [order.contact_email], order_item)
                 order.is_paid = True
                 order.save()
                 cart.items.all().delete()
@@ -292,7 +289,7 @@ def checkout(request):
                 create_transaction(balance, 2, order.total, "Tour purchase", status=5)
                 messages.error(request, "You don't have enough money on you balance")
                 return redirect("accounts:profile")
-            messages.success(request, "You have completed your order")
+            messages.success(request, "You have completed your order. We have sent tickets to your email")
             return redirect("tours:home")
     return render(request, "tours/checkout.html", {"form": form})
 
