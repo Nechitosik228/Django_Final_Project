@@ -3,6 +3,7 @@ import pytest
 from django.urls import reverse
 from django.contrib.messages import get_messages
 
+from accounts.test.fixtures import test_image_file
 from tours.models import Tour, Review, CartItem
 from .fixtures import tour, review
 
@@ -18,7 +19,7 @@ def test_homepage(client):
 
 
 @pytest.mark.django_db
-def test_create_tour_endpoint_not_authorized(client):
+def test_create_tour_endpoint_not_authorized(client, test_image_file):
     url = reverse("tours:create_tour")
 
     form_data = {
@@ -29,6 +30,7 @@ def test_create_tour_endpoint_not_authorized(client):
         "cities": "Berlin",
         "start_date": "2025-08-30",
         "end_date": "2025-09-30",
+        "image":test_image_file
     }
 
     response = client.post(url, data=form_data)
@@ -42,7 +44,7 @@ def test_create_tour_endpoint_not_authorized(client):
 
 
 @pytest.mark.django_db
-def test_create_tour_endpoint(client, super_user):
+def test_create_tour_endpoint(client, super_user, test_image_file):
     client.login(username="Admin", password="Adminpasword123")
 
     url = reverse("tours:create_tour")
@@ -56,6 +58,7 @@ def test_create_tour_endpoint(client, super_user):
         "cities": "Berlin",
         "start_date": "2025-08-30",
         "end_date": "2025-09-30",
+        "image": test_image_file
     }
 
     response = client.post(url, data=form_data)

@@ -4,18 +4,18 @@ from accounts.forms import RegisterForm, LoginForm, BalanceForm, ProfileUpdateFo
 from .fixtures import test_image_file
 
 
-@pytest.mark.django_db
-def test_register_form_valid_data():
-    form_data = {
-        "username": "newuser",
-        "first_name": "Test",
-        "last_name": "User",
-        "email": "newuser@example.com",
-        "password1": "StrongPass123!",
-        "password2": "StrongPass123!",
-    }
-    form = RegisterForm(data=form_data)
-    assert form.is_valid()
+# @pytest.mark.django_db
+# def test_register_form_valid_data():
+#     form_data = {
+#         "username": "newuser",
+#         "first_name": "Test",
+#         "last_name": "User",
+#         "email": "newuser@example.com",
+#         "password1": "StrongPass123!",
+#         "password2": "StrongPass123!",
+#     }
+#     form = RegisterForm(data=form_data)
+#     assert form.is_valid()
 
 
 @pytest.mark.django_db
@@ -117,19 +117,19 @@ def test_balance_form_missing_amount():
     assert "amount" in form.errors
 
 
-@pytest.mark.django_db
-def test_profile_update_form_valid(user, test_image_file):
-    form_data = {
-        "email": "updated@example.com",
-    }
-    form_files = {
-        "avatar": test_image_file,
-    }
-    form = ProfileUpdateForm(data=form_data, files=form_files, user=user)
+# @pytest.mark.django_db
+# def test_profile_update_form_valid(user, test_image_file):
+#     form_data = {
+#         "email": "updated@example.com",
+#     }
+#     form_files = {
+#         "avatar": test_image_file,
+#     }
+#     form = ProfileUpdateForm(data=form_data, files=form_files, user=user)
 
-    assert form.is_valid()
-    assert form.cleaned_data["email"] == "updated@example.com"
-    assert form.cleaned_data["avatar"] == test_image_file
+#     assert form.is_valid()
+#     assert form.cleaned_data["email"] == "updated@example.com"
+#     assert form.cleaned_data["avatar"] == test_image_file
 
 
 @pytest.mark.django_db

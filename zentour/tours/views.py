@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.mail import EmailMessage
 
 from .models import Tour, CartItem, OrderItem, Review, BoughtTour
 from .forms import TourForm, ReviewForm, OrderForm, EditTourForm
@@ -256,6 +258,8 @@ def checkout(request):
                         f"Tour {order_item.tour} purchase",
                         status=4,
                     )
+                    email = EmailMessage(subject='Hello!', body='This email has an attachment.', from_email=settings.EMAIL_HOST_USER, to=[order_item.tour.user.email])
+                    email.send()
                     order_item.tour.tickets_amount -= order_item.amount
                     order_item.tour.save()
                     order_item.tour.user.profile.balance.amount += order_item.item_total
@@ -344,3 +348,5 @@ def delete_review(request, review_id):
             return redirect("tours:tour_detail", tour_id=review.tour.id)
         else:
             return redirect("tours:tour_detail", tour_id=review.tour.id)
+        
+
