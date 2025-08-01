@@ -28,7 +28,6 @@ class RegisterForm(UserCreationForm):
                 "email": email,
             },
         )
-        print(response.json())
         if response.json().get("smtp_check") == False:
             raise forms.ValidationError("This email doesn't exist")
         else:
@@ -60,8 +59,23 @@ class ProfileUpdateForm(forms.Form):
 
     def clean_email(self):
         new_email = self.cleaned_data.get("email")
-        if User.objects.filter(email=new_email).exists():
-            raise ValidationError("This email already exists")
+
+        if new_email != self.user.email:
+            if User.objects.filter(email=new_email).exists():
+                raise ValidationError("This email already exists")
+            response = requests.get(
+                url=url,
+                params={
+                    "access_key": settings.API_KEY,
+                    "smtp": "1",
+                    "format": "1",
+                    "email": new_email,
+                },
+            )
+            if response.json().get("smtp_check") == False:
+                raise forms.ValidationError("This email doesn't exist")
+            else:
+                return new_email
         else:
             return new_email
 
