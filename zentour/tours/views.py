@@ -279,7 +279,13 @@ def checkout(request):
                         bought_tour.amount += order_item.amount
                         bought_tour.price += order_item.item_total
                         bought_tour.save()
-                    send_email_with_attachment('Tickets', f'Hello! Here is/are your {order_item.amount} ticket/s for {order_item.tour} in a PDF file:', settings.EMAIL_HOST_USER, [order.contact_email], order_item)
+                    send_email_with_attachment(
+                        "Tickets",
+                        f"Hello! Here is/are your {order_item.amount} ticket/s for {order_item.tour} in a PDF file:",
+                        settings.EMAIL_HOST_USER,
+                        [order.contact_email],
+                        order_item,
+                    )
                 order.is_paid = True
                 order.save()
                 cart.items.all().delete()
@@ -289,7 +295,10 @@ def checkout(request):
                 create_transaction(balance, 2, order.total, "Tour purchase", status=5)
                 messages.error(request, "You don't have enough money on you balance")
                 return redirect("accounts:profile")
-            messages.success(request, "You have completed your order. We have sent tickets to your email")
+            messages.success(
+                request,
+                "You have completed your order. We have sent tickets to your email",
+            )
             return redirect("tours:home")
     return render(request, "tours/checkout.html", {"form": form})
 
@@ -345,5 +354,3 @@ def delete_review(request, review_id):
             return redirect("tours:tour_detail", tour_id=review.tour.id)
         else:
             return redirect("tours:tour_detail", tour_id=review.tour.id)
-        
-

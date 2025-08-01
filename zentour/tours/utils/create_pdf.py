@@ -7,12 +7,12 @@ from reportlab_qrcode import QRCodeImage
 from ..models import OrderItem
 
 
-def write_pdf(order_item:OrderItem):
+def write_pdf(order_item: OrderItem):
     file_name = f"pdfs/{order_item.order.id}_tickets.pdf"
 
     pdf = canvas.Canvas(file_name)
 
-    qr_data = 'localhost:8080/tours/bought_tours/'
+    qr_data = "localhost:8080/tours/bought_tours/"
     qr_code = QRCodeImage(qr_data, size=200)
     qr_code.drawOn(pdf, 380, 630)
 
@@ -41,7 +41,7 @@ def write_pdf(order_item:OrderItem):
         pdf.drawString(190, y, f"Seat #{i}")
 
     y -= 30
-    
+
     pdf.line(150, 700, 150, y)
     pdf.line(280, 700, 280, y)
     pdf.line(20, 700, 20, y)
@@ -51,13 +51,14 @@ def write_pdf(order_item:OrderItem):
 
     pdf.line(320, 590, 570, 590)
 
-
     now = datetime.datetime.now()
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
 
     pdf.drawString(330, 570, f"Purchased on {formatted}")
     pdf.drawString(330, 540, f"Total price: ${order_item.item_total}")
-    pdf.drawString(330, 510, f"Dates: {order_item.tour.start_date} - {order_item.tour.end_date}")
+    pdf.drawString(
+        330, 510, f"Dates: {order_item.tour.start_date} - {order_item.tour.end_date}"
+    )
     pdf.drawString(330, 480, f"Tickets amount: {order_item.amount}")
     pdf.drawString(330, 450, f"Contact email: {order_item.order.contact_email}")
     pdf.drawString(330, 420, f"Contact phone: {order_item.order.contact_phone}")
