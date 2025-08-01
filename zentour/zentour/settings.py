@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tours',
     'accounts',
-    'reportlab'
+    'reportlab',
+    'qrcode'
 ]
 
 MIDDLEWARE = [
