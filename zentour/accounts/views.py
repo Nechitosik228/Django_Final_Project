@@ -1,11 +1,78 @@
 from django.conf import settings
+from django.urls import reverse
+from django.http import Http404
+from django.contrib import messages
+from django.utils.http import urlencode
+from django.core.mail import send_mail
+from django.core.signing import SignatureExpired
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 
 from .forms import RegisterForm, LoginForm, ProfileUpdateForm, BalanceForm
+from accounts.models import Profile
+from accounts.utils.decorator import email_confirmed_required
 from tours.utils import create_transaction
+
+
+def send_confirmation_email(request, user, new_email: str | None = None):
+    profile = user.profile
+    if new_email:
+        token = profile.generate_email_confirmation_token(for_new_email=new_email)
+        email_to = new_email
+    else:
+        token = profile.generate_email_confirmation_token()
+        email_to = user.email
+
+    confirm_url = request.build_absolute_uri(
+        reverse("accounts:confirm_email") + "?" + urlencode({"token": token})
+    )
+    subject = "Підтвердження email"
+    message = (
+        f"Hello {user.username},\n\n"
+        f"Please confirm your email address by clicking on the link:\n{confirm_url}\n\n"
+        "If you haven't done this, ignore this letter."
+    )
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [email_to],
+        fail_silently=False,
+    )
+
+
+def confirm_email(request):
+    token = request.GET.get("token")
+    if not token:
+        raise Http404("No token provided")
+    try:
+        user_pk, email_to_confirm = Profile.validate_email_confirmation_token(token)
+    except SignatureExpired:
+        messages.error(request, "The token has expired. Request a new confirmation.")
+        return redirect("accounts:profile")
+    except Exception:
+        messages.error(request, "Invalid token.")
+        return redirect("accounts:profile")
+    try:
+        user = User.objects.get(pk=user_pk)
+        profile = user.profile
+    except User.DoesNotExist:
+        raise Http404()
+
+    if profile.pending_email and email_to_confirm == profile.pending_email:
+        user.email = profile.pending_email
+        user.save()
+        profile.pending_email = ""
+    elif email_to_confirm != user.email:
+        messages.error(request, "Токен не відповідає email.")
+        return redirect("accounts:profile")
+
+    profile.email_confirmed = True
+    profile.save()
+    messages.success(request, "Email успішно підтверджено.")
+    return redirect("accounts:profile")
 
 
 def register(request):
@@ -13,7 +80,15 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+
+            user.profile.email_confirmed = False
+            user.profile.save()
             login(request, user)
+            send_confirmation_email(request, user)
+            messages.info(
+                request,
+                "Registered. Check your email and confirm your email address to gain full access.",
+            )
             return redirect("tours:home")
     else:
         form = RegisterForm()
@@ -57,8 +132,13 @@ def edit_user_profile(request):
         if form.is_valid():
             email = form.cleaned_data.get("email")
             if email and email != user.email:
-                user.email = email
-                user.save()
+                profile.email_confirmed = False
+                profile.save()
+                send_confirmation_email(request, user, new_email=email)
+                messages.info(
+                    request,
+                    "Your new email has been sent for confirmation. Check it and click on the link.",
+                )
             avatar = form.cleaned_data.get("avatar")
             if avatar:
                 profile.avatar = avatar
@@ -73,6 +153,7 @@ def edit_user_profile(request):
 
 
 @login_required
+@email_confirmed_required
 def superuser_view(request):
     if request.user.is_superuser == True:
         messages.success(request, "You are already super user")
@@ -83,6 +164,7 @@ def superuser_view(request):
 
 
 @login_required
+@email_confirmed_required
 def become_superuser(request):
     super_user_payment = settings.SUPER_USER_PAYMENT
     balance = request.user.profile.balance
@@ -107,6 +189,7 @@ def become_superuser(request):
 
 
 @login_required
+@email_confirmed_required
 def top_up_balance(request):
     if request.method == "GET":
         form = BalanceForm()
@@ -124,5 +207,6 @@ def top_up_balance(request):
 
 
 @login_required
+@email_confirmed_required
 def transactions(request):
     return render(request, "accounts/transactions.html")

@@ -1,0 +1,1 @@
+from .confirm_email import email_confirmed_required
