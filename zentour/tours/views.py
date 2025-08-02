@@ -282,7 +282,7 @@ def checkout(request):
                     )
                     send_email_with_attachment(
                         "Tickets",
-                        f"Hello! Here is/are your {order_item.amount} ticket/s for {order_item.tour} in a PDF file:",
+                        f"Hello {request.user.username}!\n\nHere is/are your {order_item.amount} ticket/s for {order_item.tour} in a PDF file. \n\n Enjoy your tour!\n\n Best Regards, Team Zentour",
                         settings.EMAIL_HOST_USER,
                         [order.contact_email],
                         order_item,
