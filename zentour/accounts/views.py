@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.conf import settings
 from django.urls import reverse
 from django.http import Http404
@@ -81,10 +82,8 @@ def register(request):
         if form.is_valid():
             user = form.save()
 
-            user.profile.email_confirmed = False
-            user.profile.save()
             login(request, user)
-            send_confirmation_email(request, user)
+            transaction.on_commit(lambda: send_confirmation_email(request, user))
             messages.info(
                 request,
                 "Registered. Check your email and confirm your email address to gain full access.",
@@ -132,6 +131,7 @@ def edit_user_profile(request):
         if form.is_valid():
             email = form.cleaned_data.get("email")
             if email and email != user.email:
+                profile.pending_email = email
                 profile.email_confirmed = False
                 profile.save()
                 send_confirmation_email(request, user, new_email=email)
