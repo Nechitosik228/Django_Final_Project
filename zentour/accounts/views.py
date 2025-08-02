@@ -29,7 +29,7 @@ def send_confirmation_email(request, user, new_email: str | None = None):
     confirm_url = request.build_absolute_uri(
         reverse("accounts:confirm_email") + "?" + urlencode({"token": token})
     )
-    subject = "Підтвердження email"
+    subject = "Email confirmation"
     message = (
         f"Hello {user.username},\n\n"
         f"Please confirm your email address by clicking on the link:\n{confirm_url}\n\n"
@@ -67,12 +67,25 @@ def confirm_email(request):
         user.save()
         profile.pending_email = ""
     elif email_to_confirm != user.email:
-        messages.error(request, "Токен не відповідає email.")
+        messages.error(request, "The token does not match the email address.")
         return redirect("accounts:profile")
 
     profile.email_confirmed = True
     profile.save()
-    messages.success(request, "Email успішно підтверджено.")
+    messages.success(request, "Email successfully confirmed")
+    return redirect("accounts:profile")
+
+
+@login_required
+def resend_confirmation(request):
+    user = request.user
+    profile = request.user.profile
+    if profile.email_confirmed:
+        messages.info(request, "Email already confirmed.")
+    else:
+        new_email = profile.pending_email or None
+        send_confirmation_email(request, user, new_email=new_email)
+        messages.success(request, "The confirmation link has been sent again.")
     return redirect("accounts:profile")
 
 
@@ -103,6 +116,13 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
+                if not user.profile.email_confirmed:
+                    messages.warning(
+                        request,
+                        "Your email has not been confirmed yet. Check your email or click ‘Resend’ on your profile page.",
+                    )
+                    return redirect("accounts:profile")
+
                 return redirect("tours:home")
             else:
                 form.add_error(None, "Invalid username or password.")
