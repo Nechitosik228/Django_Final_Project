@@ -8,7 +8,7 @@ from ..models import OrderItem, BoughtTour
 
 
 def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
-    file_name = f"pdfs/{order_item.order.id}_tickets.pdf"
+    file_name = f"pdfs/{order_item.id}_tickets.pdf"
     logo = 'images/logo.jpg'
 
     pdf = canvas.Canvas(file_name)
