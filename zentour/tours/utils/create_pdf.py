@@ -4,41 +4,54 @@ from django.urls import reverse
 from reportlab.pdfgen import canvas
 from reportlab_qrcode import QRCodeImage
 
-from ..models import OrderItem
+from ..models import OrderItem, BoughtTour
 
 
-def write_pdf(order_item: OrderItem):
+def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
     file_name = f"pdfs/{order_item.order.id}_tickets.pdf"
+    logo = 'images/logo.jpg'
 
     pdf = canvas.Canvas(file_name)
 
-    qr_data = "localhost:8080/tours/bought_tours/"
+    qr_data = "http://127.0.0.1:8080/tours/bought_tours/"
     qr_code = QRCodeImage(qr_data, size=200)
     qr_code.drawOn(pdf, 380, 630)
 
+    pdf.line(390, 640, 570, 640)
+    pdf.line(390, 820, 570, 820)
+    pdf.line(390, 640, 390, 820)
+    pdf.line(570, 640, 570, 820)
+
     pdf.setTitle("Your tickets")
     pdf.setFont("Helvetica-Bold", 20)
-    pdf.drawString(40, 780, f"Tickets for {order_item.tour}:")
+    pdf.drawImage(logo, 40, 760, 60, 60)
+    pdf.drawString(170, 780, f"Tickets for {order_item.tour}:")
 
     pdf.line(20, 700, 280, 700)
 
-    pdf.setFont("Helvetica", 12)
-
     y = 700
-    ticket_number = 0
+    ticket_number = bought_tour.amount
+    seat_number = bought_tour.tour.tickets_amount
+    seat_number += order_item.amount
     start = 1
-    stop = 0
+    stop = order_item.amount
     stop += 1
-    stop += order_item.amount
+
+
+    pdf.setFont("Helvetica-Bold", 15)
 
     pdf.drawString(65, 710, f"Tickets:")
     pdf.drawString(190, 710, f"Seats:")
+    pdf.drawString(320, 600, f"Details:")
 
-    for i in range(start, stop):
+    pdf.setFont("Helvetica", 12)
+
+    for _ in range(start, stop):
         ticket_number += 1
         y -= 30
-        pdf.drawString(65, y, f"Ticket #{i}")
-        pdf.drawString(190, y, f"Seat #{i}")
+        pdf.drawString(65, y, f"Ticket #{ticket_number}")
+        pdf.drawString(190, y, f"Seat #{seat_number}")
+        seat_number-= 1
 
     y -= 30
 
@@ -47,7 +60,13 @@ def write_pdf(order_item: OrderItem):
     pdf.line(20, 700, 20, y)
     pdf.line(20, y, 280, y)
 
-    pdf.drawString(320, 600, f"Details:")
+    y -= 30
+
+    pdf.line(20, y, 280, y)
+
+    y -= 15
+
+    pdf.drawString(20, y, 'Your Zentour team')
 
     pdf.line(320, 590, 570, 590)
 
@@ -57,7 +76,7 @@ def write_pdf(order_item: OrderItem):
     pdf.drawString(330, 570, f"Purchased on {formatted}")
     pdf.drawString(330, 540, f"Total price: ${order_item.item_total}")
     pdf.drawString(
-        330, 510, f"Dates: {order_item.tour.start_date} - {order_item.tour.end_date}"
+        330, 510, f"Tour Dates: {order_item.tour.start_date} - {order_item.tour.end_date}"
     )
     pdf.drawString(330, 480, f"Tickets amount: {order_item.amount}")
     pdf.drawString(330, 450, f"Contact email: {order_item.order.contact_email}")

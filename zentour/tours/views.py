@@ -271,6 +271,14 @@ def checkout(request):
                         user=request.user,
                         tour=order_item.tour,
                     )
+                    send_email_with_attachment(
+                        "Tickets",
+                        f"Hello! Here is/are your {order_item.amount} ticket/s for {order_item.tour} in a PDF file:",
+                        settings.EMAIL_HOST_USER,
+                        [order.contact_email],
+                        order_item,
+                        bought_tour
+                    )
                     if create:
                         bought_tour.price = order_item.item_total
                         bought_tour.amount = order_item.amount
@@ -279,13 +287,6 @@ def checkout(request):
                         bought_tour.amount += order_item.amount
                         bought_tour.price += order_item.item_total
                         bought_tour.save()
-                    send_email_with_attachment(
-                        "Tickets",
-                        f"Hello! Here is/are your {order_item.amount} ticket/s for {order_item.tour} in a PDF file:",
-                        settings.EMAIL_HOST_USER,
-                        [order.contact_email],
-                        order_item,
-                    )
                 order.is_paid = True
                 order.save()
                 cart.items.all().delete()
