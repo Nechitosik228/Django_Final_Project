@@ -1,0 +1,1 @@
+from .decorator import confirm_email

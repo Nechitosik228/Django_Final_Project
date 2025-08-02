@@ -11,6 +11,8 @@ from .views import (
     become_superuser,
     top_up_balance,
     transactions,
+    confirm_email,
+    resend_confirmation,
 )
 
 app_name = "accounts"
@@ -71,4 +73,6 @@ urlpatterns = [
     path("become-superuser/", become_superuser, name="become_superuser"),
     path("top-up-balance/", top_up_balance, name="top_up_balance"),
     path("transactions/", transactions, name="transactions"),
+    path("confirm-email/", confirm_email, name="confirm_email"),
+    path("resend-confirmation/", resend_confirmation, name="resend_confirmation"),
 ]
