@@ -14,6 +14,12 @@ def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
 
     pdf = canvas.Canvas(file_name)
 
+    token = generate_token_for_qr_code(bought_tour)
+
+    qr_data = "http://127.0.0.1:8080/tours/ticket-check/"  + "?" + urlencode({"token": token})
+    qr_code = QRCodeImage(qr_data, size=200)
+    qr_code.drawOn(pdf, 380, 630)
+
     pdf.line(390, 640, 570, 640)
     pdf.line(390, 820, 570, 820)
     pdf.line(390, 640, 390, 820)
@@ -52,6 +58,12 @@ def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
         seat_numbers.append(seat_number)
         seat_number-= 1
 
+    final_seat_numbers = bought_tour.seats
+    final_seat_numbers.extend(seat_numbers)
+
+    bought_tour.seats = final_seat_numbers
+    bought_tour.save()
+
     y -= 30
 
     pdf.line(150, 700, 150, y)
@@ -85,12 +97,6 @@ def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
     pdf.line(320, 590, 320, 360)
     pdf.line(570, 590, 570, 360)
     pdf.line(320, 360, 570, 360)
-
-    token = generate_token_for_qr_code(bought_tour, seat_numbers)
-
-    qr_data = "http://127.0.0.1:8080/tours/ticket-check/"  + "?" + urlencode({"token": token})
-    qr_code = QRCodeImage(qr_data, size=200)
-    qr_code.drawOn(pdf, 380, 630)
 
     pdf.save()
 

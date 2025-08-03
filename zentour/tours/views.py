@@ -375,17 +375,15 @@ def ticket_check(request):
         raise Http404("No token provided")
     
     try:
-        bought_tour_id, seat_numbers = validate_token_for_qr_code(token)
+        bought_tour_id = validate_token_for_qr_code(token)
     except Exception:
         messages.error(request, "Invalid token.")
         return redirect("tours:home")
     
     try:
         bought_tour = BoughtTour.objects.get(id=bought_tour_id)
-    except User.DoesNotExist:
-        raise Http404()
     except BoughtTour.DoesNotExist:
         raise Http404()
     
-    return render(request, 'tours/ticket_check.html', {'bought_tour':bought_tour, 'seat_numbers':seat_numbers})
+    return render(request, 'tours/ticket_check.html', {'bought_tour':bought_tour})
     

@@ -3,9 +3,9 @@ from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from ..models import BoughtTour
 
 
-def generate_token_for_qr_code(bought_tour:BoughtTour, seat_numbers):
+def generate_token_for_qr_code(bought_tour:BoughtTour):
     signer = TimestampSigner()
-    value = f"{bought_tour.id}:{seat_numbers}"
+    value = f"{bought_tour.id}"
     return signer.sign(value)
 
 
@@ -19,7 +19,7 @@ def validate_token_for_qr_code(token):
         raise
 
     try:
-        bought_tour_id, seat_numbers = unsigned.split(":", 1)
-        return int(bought_tour_id), seat_numbers
+        bought_tour_id = unsigned
+        return int(bought_tour_id)
     except ValueError:
         raise BadSignature("Malformed token")

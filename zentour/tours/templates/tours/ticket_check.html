@@ -22,7 +22,10 @@
                 <p>Amount: {{ bought_tour.amount }}</p>
                 <p>Dates: {{ bought_tour.tour.start_date }} - {{ bought_tour.tour.end_date }}</p>
                 <p>Cities: {{ bought_tour.tour.cities }}</p>
-                <p>Seats: {{ seat_numbers }}</p>
+                <p>Seats:</p>
+                {% for seat in bought_tour.seats %}
+                    <span>{{ seat }},</span>
+                {% endfor %}
             </div>
         </div>
     </div>
