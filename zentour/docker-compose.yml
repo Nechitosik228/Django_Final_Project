@@ -32,6 +32,7 @@ services:
         condition: service_healthy
     volumes:
       - .:/app:rw
+    restart: on-failure
 
 volumes:
   db_data:
