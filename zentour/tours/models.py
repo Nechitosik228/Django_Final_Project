@@ -69,7 +69,7 @@ class BoughtTour(models.Model):
         User, on_delete=models.SET_NULL, related_name="bought_tours", null=True
     )
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
-    amount = models.PositiveIntegerField(default=1)
+    amount = models.PositiveIntegerField(default=0)
     price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
 
 

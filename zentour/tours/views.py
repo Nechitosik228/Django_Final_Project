@@ -7,6 +7,7 @@ from django.core.mail import EmailMessage
 from .models import Tour, CartItem, OrderItem, Review, BoughtTour
 from .forms import TourForm, ReviewForm, OrderForm, EditTourForm
 from .utils import calculate_star_ranges, create_transaction, send_email_with_attachment
+from accounts.utils.decorator import email_confirmed_required
 
 
 def home(request):
@@ -47,6 +48,7 @@ def home(request):
 
 
 @login_required
+@email_confirmed_required
 def create_tour(request):
     if request.user.is_superuser == True:
         if request.method == "GET":
@@ -98,6 +100,7 @@ def tour_detail(request, tour_id):
 
 
 @login_required
+@email_confirmed_required
 def tour_editing(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
 
@@ -117,6 +120,7 @@ def tour_editing(request, tour_id):
 
 
 @login_required
+@email_confirmed_required
 def delete_tour(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
 
@@ -157,12 +161,14 @@ def delete_tour(request, tour_id):
 
 
 @login_required
+@email_confirmed_required
 def users_bought_tours(request):
     bought_tours = request.user.bought_tours.all()
     return render(request, "tours/users_tours.html", {"bought_tours": bought_tours})
 
 
 @login_required
+@email_confirmed_required
 def cart_detail(request):
     cart = request.user.cart
     if not cart.items.count():
@@ -174,6 +180,7 @@ def cart_detail(request):
 
 
 @login_required
+@email_confirmed_required
 def cart_delete(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
     cart = request.user.cart
@@ -187,6 +194,7 @@ def cart_delete(request, tour_id):
 
 
 @login_required
+@email_confirmed_required
 def cart_add(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
     cart = request.user.cart
@@ -217,6 +225,7 @@ def cart_add(request, tour_id):
 
 
 @login_required
+@email_confirmed_required
 def checkout(request):
     if not request.user.cart.items.all():
         messages.error(request, "Your cart is empty")
@@ -271,6 +280,14 @@ def checkout(request):
                         user=request.user,
                         tour=order_item.tour,
                     )
+                    send_email_with_attachment(
+                        "Tickets",
+                        f"Hello {request.user.username}!\n\nHere is/are your {order_item.amount} ticket/s for {order_item.tour} in a PDF file. \n\n Enjoy your tour!\n\n Best Regards, Team Zentour",
+                        settings.EMAIL_HOST_USER,
+                        [order.contact_email],
+                        order_item,
+                        bought_tour
+                    )
                     if create:
                         bought_tour.price = order_item.item_total
                         bought_tour.amount = order_item.amount
@@ -279,13 +296,6 @@ def checkout(request):
                         bought_tour.amount += order_item.amount
                         bought_tour.price += order_item.item_total
                         bought_tour.save()
-                    send_email_with_attachment(
-                        "Tickets",
-                        f"Hello! Here is/are your {order_item.amount} ticket/s for {order_item.tour} in a PDF file:",
-                        settings.EMAIL_HOST_USER,
-                        [order.contact_email],
-                        order_item,
-                    )
                 order.is_paid = True
                 order.save()
                 cart.items.all().delete()
@@ -304,6 +314,7 @@ def checkout(request):
 
 
 @login_required
+@email_confirmed_required
 def submit_review(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
 
@@ -338,6 +349,7 @@ def submit_review(request, tour_id):
 
 
 @login_required
+@email_confirmed_required
 def delete_review(request, review_id):
     review = get_object_or_404(Review, id=review_id)
 
