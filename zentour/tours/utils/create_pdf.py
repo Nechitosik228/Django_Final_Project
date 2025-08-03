@@ -1,10 +1,11 @@
 import datetime
 
-from django.urls import reverse
+from django.utils.http import urlencode
 from reportlab.pdfgen import canvas
 from reportlab_qrcode import QRCodeImage
 
 from ..models import OrderItem, BoughtTour
+from .generate_token import generate_token_for_qr_code
 
 
 def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
@@ -12,10 +13,6 @@ def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
     logo = 'images/logo.jpg'
 
     pdf = canvas.Canvas(file_name)
-
-    qr_data = "http://127.0.0.1:8080/tours/bought_tours/"
-    qr_code = QRCodeImage(qr_data, size=200)
-    qr_code.drawOn(pdf, 380, 630)
 
     pdf.line(390, 640, 570, 640)
     pdf.line(390, 820, 570, 820)
@@ -33,6 +30,7 @@ def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
     ticket_number = bought_tour.amount
     seat_number = bought_tour.tour.tickets_amount
     seat_number += order_item.amount
+    seat_numbers = []
     start = 1
     stop = order_item.amount
     stop += 1
@@ -51,6 +49,7 @@ def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
         y -= 30
         pdf.drawString(65, y, f"Ticket #{ticket_number}")
         pdf.drawString(190, y, f"Seat #{seat_number}")
+        seat_numbers.append(seat_number)
         seat_number-= 1
 
     y -= 30
@@ -86,6 +85,12 @@ def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
     pdf.line(320, 590, 320, 360)
     pdf.line(570, 590, 570, 360)
     pdf.line(320, 360, 570, 360)
+
+    token = generate_token_for_qr_code(bought_tour, seat_numbers)
+
+    qr_data = "http://127.0.0.1:8080/tours/ticket-check/"  + "?" + urlencode({"token": token})
+    qr_code = QRCodeImage(qr_data, size=200)
+    qr_code.drawOn(pdf, 380, 630)
 
     pdf.save()
 

@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import Http404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib import messages
-from django.core.mail import EmailMessage
 
 from .models import Tour, CartItem, OrderItem, Review, BoughtTour
 from .forms import TourForm, ReviewForm, OrderForm, EditTourForm
-from .utils import calculate_star_ranges, create_transaction, send_email_with_attachment
+from .utils import calculate_star_ranges, create_transaction, send_email_with_attachment, validate_token_for_qr_code
 from accounts.utils.decorator import email_confirmed_required
 
 
@@ -366,3 +367,25 @@ def delete_review(request, review_id):
             return redirect("tours:tour_detail", tour_id=review.tour.id)
         else:
             return redirect("tours:tour_detail", tour_id=review.tour.id)
+        
+
+def ticket_check(request):
+    token = request.GET.get('token')
+    if not token:
+        raise Http404("No token provided")
+    
+    try:
+        bought_tour_id, seat_numbers = validate_token_for_qr_code(token)
+    except Exception:
+        messages.error(request, "Invalid token.")
+        return redirect("tours:home")
+    
+    try:
+        bought_tour = BoughtTour.objects.get(id=bought_tour_id)
+    except User.DoesNotExist:
+        raise Http404()
+    except BoughtTour.DoesNotExist:
+        raise Http404()
+    
+    return render(request, 'tours/ticket_check.html', {'bought_tour':bought_tour, 'seat_numbers':seat_numbers})
+    

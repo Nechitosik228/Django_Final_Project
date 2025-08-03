@@ -1,0 +1,29 @@
+{% extends 'tours/base.html' %}
+
+{% block style %}
+    <style type="text/css">
+        .white {
+            color: white;
+        }
+        .text-bg-info {
+            margin: auto;
+            padding: 0;
+            width: 400px;
+            margin-bottom: 2%;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div style="text-align: center;">
+        <div class="card text-bg-info">
+            <h4 class="card-header white">Tickets for {{ bought_tour.tour }}</h4>
+            <div class="card-body white">
+                <p>Amount: {{ bought_tour.amount }}</p>
+                <p>Dates: {{ bought_tour.tour.start_date }} - {{ bought_tour.tour.end_date }}</p>
+                <p>Cities: {{ bought_tour.tour.cities }}</p>
+                <p>Seats: {{ seat_numbers }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
