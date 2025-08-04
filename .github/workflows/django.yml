@@ -26,6 +26,10 @@ jobs:
         cd zentour
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    - name: Create pdfs folder
+      run: |
+        cd zentour
+        mkdir pdfs
     - name: Export .env variables
       run: |
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
