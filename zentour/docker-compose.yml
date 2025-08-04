@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   db:
     image: postgres:17
@@ -17,6 +15,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 5s
+    restart: on-failure
 
   web:
     build: .
@@ -33,6 +32,16 @@ services:
     volumes:
       - .:/app:rw
     restart: on-failure
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
 
 volumes:
   db_data:
