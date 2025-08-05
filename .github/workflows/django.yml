@@ -21,19 +21,20 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
+    - name: Set up Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install docker-compose-plugin
+
+    - name: Create .env file
       run: |
         cd zentour
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Create pdfs folder
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+        echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+        echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+
+    - name: Run tests using docker-compose
       run: |
         cd zentour
-        mkdir pdfs
-    - name: Export .env variables
-      run: |
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-    - name: Run Tests
-      run: |
-        cd zentour
-        pytest -s
+        docker compose up --abort-on-container-exit --exit-code-from test test
