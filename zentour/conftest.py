@@ -9,10 +9,14 @@ from django.contrib.auth.models import User
 
 
 @pytest.fixture
-def user():
-    return User.objects.create_user(
+def user(db):
+    user = User.objects.create_user(
         username="testusertestusertestuser", password="password_test_user"
     )
+    profile = user.profile
+    profile.email_confirmed = True
+    profile.save()
+    return user
 
 
 @pytest.fixture

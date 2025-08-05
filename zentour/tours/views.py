@@ -7,7 +7,12 @@ from django.contrib import messages
 
 from .models import Tour, CartItem, OrderItem, Review, BoughtTour
 from .forms import TourForm, ReviewForm, OrderForm, EditTourForm
-from .utils import calculate_star_ranges, create_transaction, send_email_with_attachment, validate_token_for_qr_code
+from .utils import (
+    calculate_star_ranges,
+    create_transaction,
+    send_email_with_attachment,
+    validate_token_for_qr_code,
+)
 from accounts.utils.decorator import email_confirmed_required
 
 
@@ -287,7 +292,7 @@ def checkout(request):
                         settings.EMAIL_HOST_USER,
                         [order.contact_email],
                         order_item,
-                        bought_tour
+                        bought_tour,
                     )
                     if create:
                         bought_tour.price = order_item.item_total
@@ -367,23 +372,22 @@ def delete_review(request, review_id):
             return redirect("tours:tour_detail", tour_id=review.tour.id)
         else:
             return redirect("tours:tour_detail", tour_id=review.tour.id)
-        
+
 
 def ticket_check(request):
-    token = request.GET.get('token')
+    token = request.GET.get("token")
     if not token:
         raise Http404("No token provided")
-    
+
     try:
         bought_tour_id = validate_token_for_qr_code(token)
     except Exception:
         messages.error(request, "Invalid token.")
         return redirect("tours:home")
-    
+
     try:
         bought_tour = BoughtTour.objects.get(id=bought_tour_id)
     except BoughtTour.DoesNotExist:
         raise Http404()
-    
-    return render(request, 'tours/ticket_check.html', {'bought_tour':bought_tour})
-    
+
+    return render(request, "tours/ticket_check.html", {"bought_tour": bought_tour})
