@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'tours',
     'accounts',
     'reportlab',
-    'qrcode'
+    'qrcode',
+    'django_celery_beat',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -155,3 +157,13 @@ SUPER_USER_PAYMENT = 100
 API_EMAIL_VERIFIER_URL = 'http://apilayer.net/api/check'
 API_KEY = getenv('API_KEY')
 
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Berlin'
+
+CELERY_RESULT_BACKEND = 'django_celery_results.backends.database:DatabaseBackend'
+
+#CELERY BEAT
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

@@ -54,6 +54,35 @@ services:
       - .:/app:rw
     restart: "no" 
 
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  celery:
+    build: .
+    command: celery -A zentour beat --loglevel=info
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  celery-beat:
+    build: .
+    command: celery -A zentour beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    depends_on:
+      - redis
+      - web
+  
+  celery-worker:
+    build: .
+    command: celery -A zentour worker --loglevel=info
+    depends_on:
+      - redis
+      - web
+    environment:
+      - DJANGO_SETTINGS_MODULE=zentour.settings
+
 
 volumes:
   db_data:
