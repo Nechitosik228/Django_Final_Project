@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib import messages
 
 from .models import Tour, CartItem, OrderItem, Review, BoughtTour
@@ -188,8 +187,12 @@ def cart_delete(request, tour_id):
     cart_item = get_object_or_404(CartItem, cart=cart, tour=tour)
     cart_item.amount -= 1
     if cart_item.amount == 0:
+        tour.tickets_amount += 1
+        tour.save()
         cart_item.delete()
     else:
+        tour.tickets_amount += 1
+        tour.save()
         cart_item.save()
     return redirect("tours:cart_detail")
 
@@ -203,6 +206,9 @@ def cart_add(request, tour_id):
     if create:
         if tour.tickets_amount > 0:
             cart_item.amount = 1
+            tour.tickets_amount -= 1
+            tour.save()
+            messages.info(request, 'You have 5 minutes to order the ticket otherwise your item will be deleted immidiatly after 5 minutes')
         else:
             cart_item.delete()
             messages.warning(
@@ -212,13 +218,15 @@ def cart_add(request, tour_id):
             return redirect("tours:tour_detail", tour_id=tour.id)
     else:
         cart_item.amount += 1
-        if tour.tickets_amount < cart_item.amount:
+        if tour.tickets_amount == 0:
             messages.warning(
                 request,
                 f"Tickets left for {tour}: {tour.tickets_amount}. You cannot add another ticket!",
             )
             return redirect("tours:cart_detail")
-        else:
+        else: 
+            tour.tickets_amount -= 1
+            tour.save()
             cart_item.save()
 
     cart_item.save()
@@ -266,8 +274,6 @@ def checkout(request):
                         f"Tour {order_item.tour} purchase",
                         status=4,
                     )
-                    order_item.tour.tickets_amount -= order_item.amount
-                    order_item.tour.save()
                     order_item.tour.user.profile.balance.amount += order_item.item_total
                     order_item.tour.user.profile.balance.save()
                     create_transaction(

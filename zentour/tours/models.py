@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField
+from django.utils import timezone
 
 
 class Tour(models.Model):
@@ -101,6 +102,7 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField(default=1)
+    timestamp = models.DateTimeField(default=timezone.now())
 
     @property
     def total_price(self):
