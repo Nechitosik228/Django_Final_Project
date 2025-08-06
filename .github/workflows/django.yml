@@ -23,7 +23,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Create .env file
       run: |
-        cd zentour
         echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
         echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
         echo "DB_USER=${{ secrets.DB_USER }}" >> .env
