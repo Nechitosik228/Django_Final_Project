@@ -1,5 +1,10 @@
+import requests
+
 from django import forms
+from django.conf import settings
 from .models import Tour, Order, Review
+
+url = settings.API_EMAIL_VERIFIER_URL
 
 
 class TourForm(forms.ModelForm):
@@ -31,6 +36,22 @@ class TourForm(forms.ModelForm):
 
 
 class OrderForm(forms.ModelForm):
+    def clean_contact_email(self):
+        email = self.cleaned_data.get('contact_email')
+        response = requests.get(
+            url=url,
+            params={
+                "access_key": settings.API_KEY,
+                "smtp": "1",
+                "format": "1",
+                "email": email,
+            },
+        )
+        if response.json().get("smtp_check") == False:
+            raise forms.ValidationError("This email doesn't exist")
+        else:
+            return email
+    
     class Meta:
         model = Order
         fields = ["contact_name", "contact_phone", "contact_email", "address"]
