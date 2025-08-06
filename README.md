@@ -14,6 +14,10 @@ The main goal of the project is to simplify the process of searching, booking, a
 
 The project is built on **Django**, making it easily expandable and convenient for further integration with other services.
 
+## Requirements
+In order to run this project you need this:
+- Access key to the api (##Backend)
+
 ## Technologies
 
 ### Backend
@@ -67,30 +71,25 @@ To get started with **Zentour**, follow these steps:
     cd zentour
     pip install -r requirements.txt 
     ```
-5. **Run database migrations:**
-    ```bash
-    python manage.py migrate
-    ```
 6. **Insert .env variables:**
-    ```
-    erase .example from the .env.example file
-    insert your SECRET_KEY
-    insert your EMAIL_HOST_USER
-    insert your EMAIL_HOST_PASSWORD
-    ```
-7. **Run the development server:**
+    erase .example from env.example
     ```bash
-    python manage.py runserver
-    ```
+    SECRET_KEY = "YOUR_SECRET_KEY"
 
-## Run Docker
-1. **Створення image:**
-    ```bash
-    docker build -t your_app_name .
+    EMAIL_HOST_USER = 'YOUR_EMAIL'
+    EMAIL_HOST_PASSWORD = 'YOUR_APP_PASSWORD' #For more details check README.md
+
+    API_KEY = 'YOU_API_KEY' #For more details check README.md
+
+    DB_NAME = 'YOUR_DB_NAME'
+    DB_USER = 'YOUR_USER'
+    DB_PASSWORD = 'YOUR_PASSWORD'
+    DB_HOST = 'YOUR_HOST'
+    DB_PORT = 'YOUR_PORT'
     ```
-2. **Запуск**
+7. **Run docker:**
     ```bash
-    docker run -p 8080:8080 your_app_name
+    docker-compose up --build
     ```
 
 ## Project structure

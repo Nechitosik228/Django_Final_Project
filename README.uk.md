@@ -70,25 +70,24 @@
     python manage.py migrate
     ```
 6. **Вставте .env змінні:**
-    ```
     стеріть .example з файлу .env.example
-    вставте свій SECRET_KEY
-    вставте свій EMAIL_HOST_USER
-    вставте свій EMAIL_HOST_PASSWORD
-    ```
-7. **Запустіть сервер:**
     ```bash
-    python manage.py runserver
-    ```
+    SECRET_KEY = "YOUR_SECRET_KEY"
 
-## Запуск докеру
-1. **Create image:**
-    ```bash
-    docker build -t your_app_name .
+    EMAIL_HOST_USER = 'YOUR_EMAIL'
+    EMAIL_HOST_PASSWORD = 'YOUR_APP_PASSWORD' #For more details check README.md
+
+    API_KEY = 'YOU_API_KEY' #For more details check README.md
+
+    DB_NAME = 'YOUR_DB_NAME'
+    DB_USER = 'YOUR_USER'
+    DB_PASSWORD = 'YOUR_PASSWORD'
+    DB_HOST = 'YOUR_HOST'
+    DB_PORT = 'YOUR_PORT'
     ```
-2. **Run**
+7. **Запуск докера:**
     ```bash
-    docker run -p 8080:8080 your_app_name
+    docker-compose up --build
     ```
 
 ## Структура Проекту
