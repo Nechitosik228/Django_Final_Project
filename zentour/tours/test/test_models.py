@@ -181,7 +181,7 @@ def test_review_creation_model(tour, user):
         user=user, tour=tour, comment="Test comment", rating=4.5
     )
 
-    assert review == Review.objects.get(id=1)
+    assert review == Review.objects.get(id=review.id)
     assert review in tour.reviews.all()
     assert tour.rating == 4.5
 

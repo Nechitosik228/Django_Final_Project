@@ -355,7 +355,7 @@ def test_tour_editing_not_authorized(client, super_user, tour):
     response = client.post(url, data=form_data)
 
     url_login = reverse("accounts:login")
-    url_with_query = f"{url_login}?next=/tours/edit/1/"
+    url_with_query = f"{url_login}?next=/tours/edit/{tour.id}/"
 
     assert response.status_code == 302
     assert response.url == url_with_query
@@ -420,7 +420,7 @@ def test_tour_deleting_not_authorized(client, tour):
     response = client.post(url)
 
     url_login = reverse("accounts:login")
-    url_with_query = f"{url_login}?next=/tours/delete/1/"
+    url_with_query = f"{url_login}?next=/tours/delete/{tour.id}/"
 
     assert response.status_code == 302
     assert response.url == url_with_query
@@ -476,7 +476,7 @@ def test_review_deleting_not_authorized(client, review):
     response = client.get(url)
 
     url_login = reverse("accounts:login")
-    url_with_query = f"{url_login}?next=/tours/delete_review/1/"
+    url_with_query = f"{url_login}?next=/tours/delete_review/{review.id}/"
 
     assert response.status_code == 302
     assert response.url == url_with_query

@@ -21,6 +21,9 @@ def user(db):
 
 @pytest.fixture
 def super_user():
-    return User.objects.create_superuser(
+    user = User.objects.create_superuser(
         username="Admin", password="Adminpasword123", email="admin@gmail.com"
     )
+    user.profile.email_confirmed = True
+    user.profile.save()
+    return user
