@@ -31,4 +31,5 @@ jobs:
 
     - name: Run tests using Docker Compose
       run: |
+        cd zentour
         docker compose up --abort-on-container-exit --exit-code-from test test
