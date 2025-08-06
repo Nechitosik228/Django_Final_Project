@@ -21,6 +21,9 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Create pdfs directory
+      run: mkdir -p zentour/pdfs
+      
     - name: Create .env file
       run: |
         cd zentour
