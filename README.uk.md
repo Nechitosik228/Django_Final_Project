@@ -87,6 +87,7 @@
     python manage.py migrate
     ```
 6. **Вставте .env змінні:**
+
     стеріть .example з файлу .env.example
     ```bash
     SECRET_KEY = "YOUR_SECRET_KEY"

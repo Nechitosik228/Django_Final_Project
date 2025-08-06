@@ -85,6 +85,7 @@ To get started with **Zentour**, follow these steps:
     pip install -r requirements.txt 
     ```
 6. **Insert .env variables:**
+
     erase .example from env.example
     ```bash
     SECRET_KEY = "YOUR_SECRET_KEY"
