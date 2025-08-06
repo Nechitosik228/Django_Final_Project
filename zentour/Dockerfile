@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD [ "python", "-m", "manage", "runserver", "0.0.0.0:8080" ]
+CMD ["sh", "-c", "uvicorn zentour.asgi:application --host 0.0.0.0 --port $PORT"]
