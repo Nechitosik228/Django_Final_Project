@@ -16,7 +16,7 @@ The project is built on **Django**, making it easily expandable and convenient f
 
 ## Requirements
 In order to run this project you need this:
-- Access key to the api [Jump to section](#Backend)
+- [Access key to the api](#access-key)
 
 ## Technologies
 
