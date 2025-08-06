@@ -13,7 +13,7 @@ from .views import (
     delete_tour,
     delete_review,
     users_bought_tours,
-    ticket_check
+    ticket_check,
 )
 
 
