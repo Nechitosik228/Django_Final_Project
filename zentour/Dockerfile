@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "uvicorn zentour.asgi:application --host 0.0.0.0 --port $PORT"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && uvicorn zentour.asgi:application --host 0.0.0.0 --port $PORT"]
