@@ -213,7 +213,10 @@ def cart_add(request, tour_id):
             cart_item.amount = 1
             tour.tickets_amount -= 1
             tour.save()
-            messages.info(request, 'You have 5 minutes to order the ticket otherwise your item will be deleted immidiatly after 5 minutes')
+            messages.info(
+                request,
+                "You have 5 minutes to order the ticket otherwise your item will be deleted immidiatly after 5 minutes",
+            )
         else:
             cart_item.delete()
             messages.warning(
@@ -229,7 +232,7 @@ def cart_add(request, tour_id):
                 f"Tickets left for {tour}: {tour.tickets_amount}. You cannot add another ticket!",
             )
             return redirect("tours:cart_detail")
-        else: 
+        else:
             tour.tickets_amount -= 1
             tour.save()
             cart_item.save()
