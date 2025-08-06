@@ -6,9 +6,12 @@ RUN apt-get update && \
     apt-get install -y gcc libpq-dev build-essential postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . .
 
-RUN pip install -r requirements.txt
 EXPOSE 8080
 
-CMD [ "python", "zentour/manage.py", "runserver", "0.0.0.0:8080" ]
+CMD [ "python", "-m", "manage", "runserver", "0.0.0.0:8080" ]
