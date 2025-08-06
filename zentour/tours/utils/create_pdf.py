@@ -8,15 +8,17 @@ from ..models import OrderItem, BoughtTour
 from .generate_token import generate_token_for_qr_code
 
 
-def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
+def write_pdf(order_item: OrderItem, bought_tour: BoughtTour):
     file_name = f"pdfs/{order_item.id}_tickets.pdf"
-    logo = 'images/logo.jpg'
+    logo = "images/logo.jpg"
 
     pdf = canvas.Canvas(file_name)
 
     token = generate_token_for_qr_code(bought_tour)
 
-    qr_data = "http://127.0.0.1:8080/tours/ticket-check/"  + "?" + urlencode({"token": token})
+    qr_data = (
+        "http://127.0.0.1:8080/tours/ticket-check/" + "?" + urlencode({"token": token})
+    )
     qr_code = QRCodeImage(qr_data, size=200)
     qr_code.drawOn(pdf, 380, 630)
 
@@ -41,7 +43,6 @@ def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
     stop = order_item.amount
     stop += 1
 
-
     pdf.setFont("Helvetica-Bold", 15)
 
     pdf.drawString(65, 710, f"Tickets:")
@@ -56,7 +57,7 @@ def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
         pdf.drawString(65, y, f"Ticket #{ticket_number}")
         pdf.drawString(190, y, f"Seat #{seat_number}")
         seat_numbers.append(seat_number)
-        seat_number-= 1
+        seat_number -= 1
 
     final_seat_numbers = bought_tour.seats
     final_seat_numbers.extend(seat_numbers)
@@ -77,7 +78,7 @@ def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
 
     y -= 15
 
-    pdf.drawString(20, y, 'Your Zentour team')
+    pdf.drawString(20, y, "Your Zentour team")
 
     pdf.line(320, 590, 570, 590)
 
@@ -87,7 +88,9 @@ def write_pdf(order_item: OrderItem, bought_tour:BoughtTour):
     pdf.drawString(330, 570, f"Purchased on {formatted}")
     pdf.drawString(330, 540, f"Total price: ${order_item.item_total}")
     pdf.drawString(
-        330, 510, f"Tour Dates: {order_item.tour.start_date} - {order_item.tour.end_date}"
+        330,
+        510,
+        f"Tour Dates: {order_item.tour.start_date} - {order_item.tour.end_date}",
     )
     pdf.drawString(330, 480, f"Tickets amount: {order_item.amount}")
     pdf.drawString(330, 450, f"Contact email: {order_item.order.contact_email}")
