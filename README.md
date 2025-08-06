@@ -15,8 +15,21 @@ The main goal of the project is to simplify the process of searching, booking, a
 The project is built on **Django**, making it easily expandable and convenient for further integration with other services.
 
 ## Requirements
-In order to run this project you need this:
-- [Access key to the api](#access-key)
+In order to run this project you need:
+- Access [key](#access-key) to the api
+- Installed [docker](https://docs.docker.com/)
+- Secret key -> [Generator](https://djecrety.ir/)
+- DB settings -> [Documentation](https://docs.djangoproject.com/en/5.2/ref/databases/#id13)
+- Email [host](#email-host) and password for sending emails
+
+## Access Key
+1. **Authentication:**
+
+    [Register](https://mailboxlayer.com/signup?plan=797&billing=yearly) or [login](https://mailboxlayer.com/login) at the api website
+
+2. **Get the key:**
+
+    Go to your [dashboard](https://mailboxlayer.com/dashboard) and there you will find the access key. Copy it and then follow the [Installation](#installation)
 
 ## Technologies
 
@@ -77,9 +90,9 @@ To get started with **Zentour**, follow these steps:
     SECRET_KEY = "YOUR_SECRET_KEY"
 
     EMAIL_HOST_USER = 'YOUR_EMAIL'
-    EMAIL_HOST_PASSWORD = 'YOUR_APP_PASSWORD' #For more details check README.md
+    EMAIL_HOST_PASSWORD = 'YOUR_APP_PASSWORD'
 
-    API_KEY = 'YOU_API_KEY' #For more details check README.md
+    API_KEY = 'YOU_API_KEY'
 
     DB_NAME = 'YOUR_DB_NAME'
     DB_USER = 'YOUR_USER'
