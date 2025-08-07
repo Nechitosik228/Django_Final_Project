@@ -47,6 +47,8 @@ In order to run this project you need:
 
 - Then follow the [Installation](#installation)
 
+- Full step by step [Guide](https://www.geeksforgeeks.org/python/setup-sending-email-in-django-project/)
+
 ## Technologies
 
 ### Backend

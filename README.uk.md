@@ -45,6 +45,8 @@
 
 - Потім переходьте до [Інсталяції](#installation)
 
+Повний покроковий [Посібник](https://www.geeksforgeeks.org/python/setup-sending-email-in-django-project/)
+
 
 ## Технології
 
