@@ -84,7 +84,7 @@ To get started with **Zentour**, follow these steps:
     cd zentour
     pip install -r requirements.txt 
     ```
-6. **Insert .env variables:**
+5. **Insert .env variables:**
 
     erase .example from env.example
     ```bash
@@ -101,7 +101,7 @@ To get started with **Zentour**, follow these steps:
     DB_HOST = 'YOUR_HOST'
     DB_PORT = 'YOUR_PORT'
     ```
-7. **Run docker:**
+6. **Run docker:**
     ```bash
     docker-compose up --build
     ```
