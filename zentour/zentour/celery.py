@@ -1,6 +1,7 @@
 import os
 
 from celery import Celery
+from celery.schedules import crontab
 from django.conf import settings
 
 # Set the default Django settings module for the 'celery' program.
@@ -15,9 +16,9 @@ app = Celery('zentour')
 app.config_from_object(settings, namespace='CELERY')
 
 app.conf.beat_schedule = {
-    'delete-check-every-10-seconds': {
+    'delete-check-every-5-minutes': {
         'task': 'tours.tasks.delete_old_cart_items',
-        'schedule': 10.0,
+        'schedule': crontab(minute='*/5')
     },
 }
 

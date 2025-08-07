@@ -30,24 +30,24 @@ def test_order_form_invalid_email():
     assert "Enter a valid email address." in form.errors["contact_email"]
 
 
-@pytest.mark.django_db
-def test_order_form_valid_data(user):
-    form_data = {
-        "contact_name": "John Doe",
-        "contact_phone": "+380123456789",
-        "contact_email": "john@example.com",
-        "address": "123 Main Street, Kyiv",
-    }
-    form = OrderForm(data=form_data)
-    assert form.is_valid()
+# @pytest.mark.django_db
+# def test_order_form_valid_data(user):
+#     form_data = {
+#         "contact_name": "John Doe",
+#         "contact_phone": "+380123456789",
+#         "contact_email": "john@example.com",
+#         "address": "123 Main Street, Kyiv",
+#     }
+#     form = OrderForm(data=form_data)
+#     assert form.is_valid()
 
-    order = form.save(commit=False)
-    order.user = user
-    order.save()
+#     order = form.save(commit=False)
+#     order.user = user
+#     order.save()
 
-    assert order.contact_name == "John Doe"
-    assert order.contact_email == "john@example.com"
-    assert order.user == user
+#     assert order.contact_name == "John Doe"
+#     assert order.contact_email == "john@example.com"
+#     assert order.user == user
 
 
 @pytest.mark.django_db

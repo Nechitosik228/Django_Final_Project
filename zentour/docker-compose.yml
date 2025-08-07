@@ -62,7 +62,7 @@ services:
 
   celery:
     build: .
-    command: celery -A zentour beat --loglevel=info
+    command: 'celery -A zentour beat --loglevel=info '
     depends_on:
       - redis
     environment:
@@ -77,7 +77,7 @@ services:
   
   celery-worker:
     build: .
-    command: celery -A zentour worker --loglevel=info
+    command:  celery -A zentour worker --loglevel=info
     depends_on:
       - redis
       - web

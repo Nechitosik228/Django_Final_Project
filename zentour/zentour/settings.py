@@ -28,7 +28,7 @@ SECRET_KEY = getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["django-final-project-7mkn.onrender.com"]
+ALLOWED_HOSTS = ["django-final-project-7mkn.onrender.com", '127.0.0.1']
 
 
 # Application definition
