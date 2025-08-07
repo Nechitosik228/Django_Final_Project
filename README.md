@@ -31,6 +31,22 @@ In order to run this project you need:
 
     Go to your [dashboard](https://mailboxlayer.com/dashboard) and there you will find the access key. Copy it and then follow the [Installation](#installation)
 
+## Email host
+
+1. **Requirement:**
+
+    You need a two-factor authentication on your [Google account](https://myaccount.google.com/u/1/signinoptions/twosv)
+
+2. **Creating the password:**
+
+- Go to [App Passwords](https://myaccount.google.com/apppasswords)
+    
+- Write name for the password
+    
+- Then copy the password which will pop up, because once you close the window you won't be able to see the password
+
+- Then follow the [Installation](#installation)
+
 ## Technologies
 
 ### Backend
@@ -126,6 +142,7 @@ Django_Final_Project
    │  │  ├─ 0005_transaction.py
    │  │  ├─ 0006_transaction_category_transaction_status.py
    │  │  ├─ 0007_alter_transaction_options.py
+   │  │  ├─ 0008_profile_email_confirmed_profile_pending_email.py
    │  │  └─ __init__.py
    │  ├─ models.py
    │  ├─ signals.py
@@ -154,9 +171,15 @@ Django_Final_Project
    │  │  ├─ test_models.py
    │  │  └─ __init__.py
    │  ├─ urls.py
+   │  ├─ utils
+   │  │  ├─ decorator
+   │  │  │  ├─ confirm_email.py
+   │  │  │  └─ __init__.py
+   │  │  └─ __init__.py
    │  ├─ views.py
    │  └─ __init__.py
    ├─ conftest.py
+   ├─ docker-compose.yml
    ├─ Dockerfile
    ├─ images
    │  ├─ logo.jpg
@@ -184,11 +207,15 @@ Django_Final_Project
    │  │  ├─ 0012_remove_tour_buyers_alter_tour_discount_and_more.py
    │  │  ├─ 0013_boughttour_price.py
    │  │  ├─ 0014_remove_orderitem_price.py
+   │  │  ├─ 0015_alter_boughttour_amount.py
+   │  │  ├─ 0016_boughttour_seats.py
+   │  │  ├─ 0017_cartitem_timestamp.py
    │  │  └─ __init__.py
    │  ├─ models.py
    │  ├─ static
    │  │  └─ js
    │  │     └─ review_star.js
+   │  ├─ tasks.py
    │  ├─ templates
    │  │  └─ tours
    │  │     ├─ base.html
@@ -199,6 +226,7 @@ Django_Final_Project
    │  │     ├─ delete_tour.html
    │  │     ├─ edit_tour.html
    │  │     ├─ home.html
+   │  │     ├─ ticket_check.html
    │  │     ├─ tour_detail.html
    │  │     └─ users_tours.html
    │  ├─ test
@@ -210,12 +238,16 @@ Django_Final_Project
    │  ├─ urls.py
    │  ├─ utils
    │  │  ├─ calculate_star.py
+   │  │  ├─ create_pdf.py
+   │  │  ├─ generate_token.py
+   │  │  ├─ send_email.py
    │  │  ├─ transaction.py
    │  │  └─ __init__.py
    │  ├─ views.py
    │  └─ __init__.py
    └─ zentour
       ├─ asgi.py
+      ├─ celery.py
       ├─ settings.py
       ├─ urls.py
       ├─ wsgi.py
@@ -227,4 +259,5 @@ Django_Final_Project
 
 ---
 # Translation to [Ukrainian](README.uk.md)
+
 
